@@ -144,7 +144,7 @@ WSGI_APPLICATION = 'manga.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'manga',
+        'NAME': 'manga_db',
         'USER': 'manga_admin',
         'PASSWORD': 'mangareader',
         'HOST': '127.0.0.1',

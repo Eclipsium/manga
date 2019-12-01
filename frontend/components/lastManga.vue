@@ -1,161 +1,92 @@
 <template>
   <v-card
     class="mx-auto"
-    flat
+    elevation="4"
   >
     <v-card-text class="title text-center">Последние обновления</v-card-text>
     <v-container>
       <v-row class="fill-height">
-        <v-col
-          v-for="card in cards"
-          :key="card.title"
-          cols="12"
-          lg="2"
-          md="4"
-          sm="6"
+        <v-sheet
+          class="mx-auto"
+          max-width="100%"
         >
-          <v-hover v-slot:default="{ hover }">
-            <v-card :elevation="hover ? 12 : 2"
+          <v-slide-group class="d-flex" show-arrows>
+            <v-slide-item
+              v-for="card in getLastManga"
+              :key="card.title"
+              elevation="10"
             >
-              <v-img
-                :src="card.src"
-                :aspect-ratio="0.7"
-                max-height="500"
-                class="white--text align-end"
-                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.9)"
-                @click="toMangaPage(card.mangaUrl)"
-              >
-                <v-card-title>{{card.title}}: {{card.volume}}-{{card.part}}</v-card-title>
-                <v-expand-transition>
-                  <div
-                    v-if="hover"
-                    class="d-flex transition-fast-in-fast-out info darken-4 v-card--reveal display-5 white--text pa-2"
-                    style="height: 100%;"
+              <v-hover v-slot:default="{ hover }">
+                <v-card flat
+                        shaped
+                        :elevation="hover ? 8 : 0 "
+                        class="mb-4 mx-2"
+                >
+                  <v-img
+                    :aspect-ratio="0.7"
+                    :src="card.src"
+                    width="300"
+                    class="white--text align-end"
+                    gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.9)"
+                    @click="toMangaPage(card.mangaUrl)"
                   >
-                    {{card.description}}
-                  </div>
-                </v-expand-transition>
+                    <v-card-title>{{card.title}}: {{card.volume}}-{{card.part}}</v-card-title>
+                    <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out info darken-4 v-card--reveal subtitle-2 white--text pa-2"
+                        style="height: 100%;"
+                      >
+                        {{card.description}}
+                      </div>
+                    </v-expand-transition>
 
-                <div class="text-center">
-                  <v-rating
-                    v-model="card.rating"
-                    background-color="orange lighten-3"
-                    color="orange"
-                    readonly
-                    half-increments
-                    small
-                  ></v-rating>
-                </div>
-              </v-img>
-              <v-card-subtitle>
-                Обновлено
-                <span class="subtitle-2 green--text">{{card.updated}}</span>
-                пользователем
-                <a :href="card.authorLink" class="subtitle-2">{{card.author}}</a>
-              </v-card-subtitle>
-            </v-card>
-          </v-hover>
-        </v-col>
+                    <div class="text-center">
+                      <v-rating
+                        v-model="card.rating"
+                        background-color="orange lighten-3"
+                        color="orange"
+                        readonly
+                        half-increments
+                        small
+                      />
+                    </div>
+                  </v-img>
+                  <v-card-subtitle>
+                    Обновлено
+                    <p class="subtitle-2 green--text">{{card.updated}}</p>
+                    пользователем
+                    <a :href="card.authorLink" class="subtitle-2">{{card.posted}}</a>
+                  </v-card-subtitle>
+                </v-card>
+              </v-hover>
+            </v-slide-item>
+          </v-slide-group>
+        </v-sheet>
       </v-row>
     </v-container>
-    <v-card-actions>
+    <v-card-actions align-content="center">
       <v-spacer></v-spacer>
-      <v-btn color="info" class="mb-2">Загрузить еще</v-btn>
+      <v-btn color="success" class="mb-3">Полный список</v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+    import {mapMutations, mapGetters} from 'vuex'
+
     export default {
-        name: "lastManga",
-        data: () => ({
-            cards: [
-                {
-                    title: 'Pre-fab homes',
-                    description: 'Крутое аниме по мотиву одноименного произведения хадео кадзимы',
-                    mangaUrl: '/inspire',
-                    author: 'Abiogenesis',
-                    authorLink: '/error',
-                    updated: '19/11/2019',
-                    volume: 15,
-                    part: 125,
-                    src: 'https://remanga.org/media/manga/tower_of_god/l_head.png',
-                    rating: 4.5,
-                    bookmarked: 15
-                },
-                {
-                    title: 'Pre-fab homes',
-                    description: 'Крутое аниме по мотиву одноименного произведения хадео кадзимы',
-                    mangaUrl: '/inspire',
-                    author: 'Abiogenesis',
-                    authorLink: '/error',
-                    updated: '19/11/2019',
-                    volume: 15,
-                    part: 125,
-                    src: 'https://remanga.org/media/manga/tower_of_god/l_head.png',
-                    rating: 4.5,
-                    bookmarked: 15
-                },
-                {
-                    title: 'Pre-fab homes',
-                    description: 'Крутое аниме по мотиву одноименного произведения хадео кадзимы',
-                    mangaUrl: '/inspire',
-                    author: 'Abiogenesis',
-                    authorLink: '/error',
-                    updated: '19/11/2019',
-                    volume: 15,
-                    part: 125,
-                    src: 'https://remanga.org/media/manga/tower_of_god/l_head.png',
-                    rating: 4.5,
-                    bookmarked: 15
-                },
-                {
-                    title: 'Pre-fab homes',
-                    description: 'Крутое аниме по мотиву одноименного произведения хадео кадзимы',
-                    mangaUrl: '/inspire',
-                    author: 'Abiogenesis',
-                    authorLink: '/error',
-                    updated: '19/11/2019',
-                    volume: 15,
-                    part: 125,
-                    src: 'https://remanga.org/media/manga/tower_of_god/l_head.png',
-                    rating: 4.5,
-                    bookmarked: 15
-                },
-                {
-                    title: 'Pre-fab homes',
-                    description: 'Крутое аниме по мотиву одноименного произведения хадео кадзимы',
-                    mangaUrl: '/inspire',
-                    author: 'Abiogenesis',
-                    authorLink: '/error',
-                    updated: '19/11/2019',
-                    volume: 15,
-                    part: 125,
-                    src: 'https://remanga.org/media/manga/tower_of_god/l_head.png',
-                    rating: 4.5,
-                    bookmarked: 15
-                },
-                {
-                    title: 'Pre-fab homes',
-                    description: 'Крутое аниме по мотиву одноименного произведения хадео кадзимы',
-                    mangaUrl: '/inspire',
-                    author: 'Abiogenesis',
-                    authorLink: '/error',
-                    updated: '19/11/2019',
-                    volume: 15,
-                    part: 125,
-                    src: 'https://remanga.org/media/manga/tower_of_god/l_head.png',
-                    rating: 4.5,
-                    bookmarked: 15
-                },
-            ],
+        computed: mapGetters({
+            getLastManga: 'manga/getLastManga'
         }),
+        name: "lastManga",
+        data: () => ({}),
         methods: {
             toMangaPage(url) {
                 this.$router.push(url)
             }
-        }
+        },
     }
 </script>
 
@@ -164,7 +95,7 @@
     align-items: center;
     bottom: 0;
     justify-content: center;
-    opacity: .5;
+    opacity: .7;
     position: absolute;
     width: 100%;
   }

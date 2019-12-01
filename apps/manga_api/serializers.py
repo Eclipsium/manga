@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.manga_api.models import Manga
+from apps.manga_api.models import *
 
 
 class MangaSerializer(serializers.ModelSerializer):

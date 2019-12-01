@@ -9,7 +9,12 @@ class MangaAdmin(admin.ModelAdmin):
     pass
 
 
-# @admin.register(MangaPerson)
-# class MangaPersonAdmin(admin.ModelAdmin):
-#     pass
+@admin.register(MangaPart)
+class MangaAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(MangaImage)
+class MangaAdmin(admin.ModelAdmin):
+    pass
 

@@ -35,10 +35,17 @@ class ChoiceArrayField(ArrayField):
         return super(ArrayField, self).formfield(**defaults)
 
 
-def get_file_path(instance, filename):
+def get_poster_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('posters/', instance.manga_original_name, filename)
+    return os.path.join('posters/', instance.slug, filename)
+
+
+def get_manga_image_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('manga/', str(instance.part.manga.slug), str(instance.part.volume), str(instance.part.part),
+                        filename)
 
 
 # class MangaPerson(models.Model):
@@ -69,7 +76,7 @@ class Manga(models.Model):
     drawer = models.CharField('Художник', max_length=100)
     year = models.IntegerField('Год выпуска')
     translation = models.CharField('Переводчик', max_length=100)
-    poster = models.ImageField('Обложка', upload_to=get_file_path, blank=True, null=True)
+    poster = models.ImageField('Обложка', upload_to=get_poster_path, blank=True, null=True)
     rating = models.FloatField('Рейтинг', default=0)
 
     def __str__(self):
@@ -82,6 +89,33 @@ class Manga(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.english_name)
         super(Manga, self).save(*args, **kwargs)
+
+
+class MangaPart(models.Model):
+    part = models.IntegerField('Часть')
+    volume = models.IntegerField('Том')
+    created = models.ForeignKey(User, verbose_name='Добавил', on_delete=models.CASCADE)
+    manga = models.ForeignKey(Manga, verbose_name='Манга', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Часть'
+        verbose_name_plural = 'Части'
+
+    def __str__(self):
+        return str(self.manga) + ': ' + str(self.volume) + '-' + str(self.part)
+
+
+class MangaImage(models.Model):
+    part = models.ForeignKey(MangaPart, verbose_name='Часть', on_delete=models.CASCADE)
+    sort_index = models.IntegerField('Позиция в комиксе')
+    image = models.ImageField('Картинка манги', upload_to=get_manga_image_path)
+
+    class Meta:
+        verbose_name = 'Картинка'
+        verbose_name_plural = 'Картинки'
+
+    def __str__(self):
+        return str(self.part.volume) + '-' + str(self.part.part) + ': картинка ' + str(self.sort_index)
 
 
 @receiver(post_delete, sender=Manga)
@@ -100,3 +134,21 @@ def delete_file_on_change_extension(sender, instance, **kwargs):
             new_poster = instance.poster
             if old_poster and old_poster.url != new_poster.url:
                 old_poster.delete(save=False)
+
+
+@receiver(post_delete, sender=MangaImage)
+def delete_img_from_media(sender, instance, **kwargs):
+    os.remove(os.path.join(settings.MEDIA_ROOT, instance.image.name))
+
+
+@receiver(pre_save, sender=MangaImage)
+def delete_file_on_change_extension(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            old_image = MangaImage.objects.get(pk=instance.pk).image
+        except MangaImage.DoesNotExist:
+            return
+        else:
+            new_image = instance.image
+            if old_image and new_image.url != new_image.url:
+                old_image.delete(save=False)

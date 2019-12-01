@@ -58,7 +58,7 @@
                       Обновлено
                       <span class="subtitle-2 green--text">{{card.updated}}</span>
                       пользователем
-                      <a :href="card.authorLink" class="subtitle-2">{{card.author}}</a>
+                      <a :href="card.authorLink" class="subtitle-2">{{card.posted}}</a>
                     </v-card-subtitle>
                     <v-card-actions class="pa-4">
                       Рейтинг:
