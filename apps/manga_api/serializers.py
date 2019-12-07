@@ -7,8 +7,15 @@ class MangaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Manga
-        fields = ('id', 'russian_name', 'english_name', 'slug', 'categories', 'author',
-                  'drawer', 'year', 'translation', 'poster', 'rating')
+        fields = '__all__'
 
 
+class MangaHomePageSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для главной страницы
+    """
+    # def get_foo(self, obj):
 
+    class Meta:
+        model = Manga
+        fields = ('english_name', 'slug', 'poster', 'rating', 'descriptions',)

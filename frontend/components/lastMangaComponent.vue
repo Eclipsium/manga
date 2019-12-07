@@ -12,8 +12,8 @@
         >
           <v-slide-group class="d-flex" show-arrows>
             <v-slide-item
-              v-for="card in getLastManga"
-              :key="card.title"
+              v-for="(manga, index) in lastMangaData"
+              :key="index"
               elevation="10"
             >
               <v-hover v-slot:default="{ hover }">
@@ -24,26 +24,26 @@
                 >
                   <v-img
                     :aspect-ratio="0.7"
-                    :src="card.src"
+                    :src="manga.poster"
                     width="300"
                     class="white--text align-end"
                     gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.9)"
-                    @click="toMangaPage(card.mangaUrl)"
+                    @click="toMangaPage(manga.slug)"
                   >
-                    <v-card-title>{{card.title}}: {{card.volume}}-{{card.part}}</v-card-title>
+                    <v-card-title>{{manga.english_name}}: {{manga.volume}}-{{manga.part}}</v-card-title>
                     <v-expand-transition>
                       <div
                         v-if="hover"
                         class="d-flex transition-fast-in-fast-out info darken-4 v-card--reveal subtitle-2 white--text pa-2"
                         style="height: 100%;"
                       >
-                        {{card.description}}
+                        {{manga.description}}
                       </div>
                     </v-expand-transition>
 
                     <div class="text-center">
                       <v-rating
-                        v-model="card.rating"
+                        v-model="manga.rating"
                         background-color="orange lighten-3"
                         color="orange"
                         readonly
@@ -54,9 +54,10 @@
                   </v-img>
                   <v-card-subtitle>
                     Обновлено
-                    <p class="subtitle-2 green--text">{{card.updated}}</p>
+                    <span class="subtitle-2 green--text">{{ manga.date }}</span>
                     пользователем
-                    <a :href="card.authorLink" class="subtitle-2">{{card.posted}}</a>
+                    <br>
+                    <a :href=getProfileUrl(manga.created_by) class="subtitle-2">{{manga.created_by}}</a>
                   </v-card-subtitle>
                 </v-card>
               </v-hover>
@@ -74,20 +75,19 @@
 </template>
 
 <script>
-    import {mapMutations, mapGetters} from 'vuex'
-
-    export default {
-        computed: mapGetters({
-            getLastManga: 'manga/getLastManga'
-        }),
-        name: "lastManga",
-        data: () => ({}),
-        methods: {
-            toMangaPage(url) {
-                this.$router.push(url)
-            }
-        },
-    }
+  export default {
+    name: "lastMangaComponent",
+    props: ['lastMangaData'],
+    data: () => ({}),
+    methods: {
+      toMangaPage(url) {
+        this.$router.push('/manga/' + url + '/')
+      },
+      getProfileUrl(username) {
+        return '/profile/' + username + '/'
+      },
+    },
+  }
 </script>
 
 <style scoped>

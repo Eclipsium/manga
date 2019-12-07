@@ -97,7 +97,7 @@
                 }
             },
         },
-        data: () => ({
+      data: () => ({
             slug: null,
             volume: null,
             part: null,

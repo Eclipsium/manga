@@ -52,9 +52,9 @@
             <v-btn text v-on="on">
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+                  <v-img :src="avatar"/>
                 </v-list-item-avatar>
-                <v-list-item-subtitle>Abiogenesis</v-list-item-subtitle>
+                <v-list-item-subtitle>{{nickname}}</v-list-item-subtitle>
                 <v-list-item-action>
                   <v-icon>mdi-menu-down</v-icon>
                 </v-list-item-action>
@@ -90,34 +90,40 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                drawer: false,
-                loginItems: [
-                    {
-                        icon: 'mdi-home',
-                        title: 'Главная',
-                        to: '/'
-                    },
-                    {
-                        icon: 'mdi-chart-bubble',
-                        title: 'Каталог',
-                        to: '/catalog'
-                    },
-                    {
-                        icon: 'mdi-card-search-outline',
-                        title: 'Поиск',
-                        to: '/catalog'
-                    }
-                ],
-                profileItems: [
-                    {title: 'Мой профиль', to: '/profile', icon: 'mdi-account'},
-                    {title: 'Закладки', to: '/bookmarks', icon: 'mdi-bookmark'},
-                ],
-                title: 'Manga Reader'
-            }
-        },
-        methods: {}
-    }
+  import {mapGetters} from 'vuex'
+
+  export default {
+    data() {
+      return {
+        drawer: false,
+        loginItems: [
+          {
+            icon: 'mdi-home',
+            title: 'Главная',
+            to: '/'
+          },
+          {
+            icon: 'mdi-chart-bubble',
+            title: 'Каталог',
+            to: '/catalog/'
+          },
+          {
+            icon: 'mdi-card-search-outline',
+            title: 'Поиск',
+            to: '/search/'
+          }
+        ],
+        profileItems: [
+          {title: 'Мой профиль', to: '/profile/', icon: 'mdi-account'},
+          {title: 'Закладки', to: '/bookmarks/', icon: 'mdi-bookmark'},
+        ],
+        title: 'MangaExchange.ru'
+      }
+    },
+    methods: {},
+    computed: mapGetters({
+      avatar: 'user/getUserAvatar',
+      nickname: 'user/getUserNickName',
+    }),
+  }
 </script>

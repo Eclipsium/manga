@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import datetime
 
 from django import forms
 from django.conf import settings
@@ -48,22 +49,6 @@ def get_manga_image_path(instance, filename):
                         filename)
 
 
-# class MangaPerson(models.Model):
-#     full_name = models.CharField('Полное имя', max_length=100)
-#     slug = models.SlugField('url', unique=True, blank=True)
-#
-#     def __str__(self):
-#         return str(self.full_name)
-#
-#     def save(self, *args, **kwargs):
-#         self.slug = slugify(self.full_name)
-#         super(MangaPerson, self).save(*args, **kwargs)
-#
-#     class Meta:
-#         verbose_name = 'Профиль'
-#         verbose_name_plural = 'Профили'
-
-
 class Manga(models.Model):
     russian_name = models.CharField('Название на русском', max_length=100, unique=True)
     english_name = models.CharField('Название на английском', max_length=100, unique=True)
@@ -78,6 +63,7 @@ class Manga(models.Model):
     translation = models.CharField('Переводчик', max_length=100)
     poster = models.ImageField('Обложка', upload_to=get_poster_path, blank=True, null=True)
     rating = models.FloatField('Рейтинг', default=0)
+    is_promoted = models.BooleanField('Выбор редакции', default=False)
 
     def __str__(self):
         return str(self.russian_name) + ' | ' + str(self.slug)
@@ -94,7 +80,8 @@ class Manga(models.Model):
 class MangaPart(models.Model):
     part = models.IntegerField('Часть')
     volume = models.IntegerField('Том')
-    created = models.ForeignKey(User, verbose_name='Добавил', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, verbose_name='Добавил', on_delete=models.CASCADE)
+    create_time = models.DateTimeField('Дата добавления', auto_now_add=True)
     manga = models.ForeignKey(Manga, verbose_name='Манга', on_delete=models.CASCADE)
 
     class Meta:
