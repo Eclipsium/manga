@@ -128,7 +128,6 @@
         if (this.$refs.form.validate()) {
           let store = this.$store;
           let router = this.$router;
-          let axios = this.$axios;
 
           store.commit('status/onProcess', true);
           store.commit('status/cleanAlert');

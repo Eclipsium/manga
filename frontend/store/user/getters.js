@@ -10,5 +10,8 @@ export default {
   },
   getUserNickName(state){
     return state.nickname
+  },
+  getUserFullName(state){
+    return state.fullName
   }
 };

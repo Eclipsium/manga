@@ -28,15 +28,17 @@
             <v-form v-model="imageValid">
             <v-file-input
               :rules="imageRules"
+              v-model="image"
+              type="file"
               accept="image/png, image/jpeg, image/bmp"
-              placeholder="Выберите свой аватар"
+              placeholder="Upload new avatar"
               prepend-icon="mdi-camera"
-              label="Аватарка"
+              label="Avatar"
             />
             </v-form>
           </v-col>
           <v-col cols="12" sm="3">
-            <v-btn :disabled="!imageValid" color="success">Сохранить</v-btn>
+            <v-btn :disabled="!imageValid" color="success">Save</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -52,9 +54,11 @@
     name: "profilePhoto",
     data() {
       return {
-        imageValid: false,
+        image: null,
+        imageValid: true,
         imageRules: [
-          value => !value || value.size < 2000000 || 'Аватарка должна быть меньше 2мб!',
+          v => !!v || 'Is required',
+          v => !v || v.size < 2000000 || 'Avatars should less than 2 MB! !',
         ],
       }
     },

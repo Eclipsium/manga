@@ -45,64 +45,82 @@ def get_poster_path(instance, filename):
 def get_manga_image_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('manga/', str(instance.part.manga.slug), str(instance.part.volume), str(instance.part.part),
+    return os.path.join('manga/', str(instance.volume.manga.slug), 'volume ' + str(instance.volume.volume),
                         filename)
 
 
-class Manga(models.Model):
-    russian_name = models.CharField('Название на русском', max_length=100, unique=True)
-    english_name = models.CharField('Название на английском', max_length=100, unique=True)
-    descriptions = models.TextField('Описание', max_length=500)
-    slug = models.SlugField('url', unique=True, blank=True)
-    volumes = models.IntegerField('Количество томов')
-    categories = ChoiceArrayField(
-        models.CharField(choices=MANGA_CATEGORIES, max_length=15, blank=True), blank=True, null=True)
-    author = models.CharField('Сценарист', max_length=100)
-    drawer = models.CharField('Художник', max_length=100)
-    year = models.IntegerField('Год выпуска')
-    translation = models.CharField('Переводчик', max_length=100)
-    poster = models.ImageField('Обложка', upload_to=get_poster_path, blank=True, null=True)
-    rating = models.FloatField('Рейтинг', default=0)
-    is_promoted = models.BooleanField('Выбор редакции', default=False)
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(username='deleted')[0]
+
+
+class MangaArtist(models.Model):
+    name = models.CharField('Artist name', max_length=100, unique=True)
+    slug = models.SlugField('url', unique=True, blank=True, null=True)
 
     def __str__(self):
-        return str(self.russian_name) + ' | ' + str(self.slug)
+        return str(self.name)
 
     class Meta:
-        verbose_name = 'Манга'
-        verbose_name_plural = 'Манга'
+        verbose_name = 'Artist'
+        verbose_name_plural = 'Artists'
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(MangaArtist, self).save(*args, **kwargs)
+
+
+class Manga(models.Model):
+    japan_name = models.CharField('Japan title', max_length=100, null=True, blank=True)
+    english_name = models.CharField('English title', max_length=100)
+    descriptions = models.TextField('Description', max_length=500)
+    slug = models.SlugField('url', unique=True, blank=True)
+    categories = ChoiceArrayField(
+        models.CharField(choices=MANGA_CATEGORIES, max_length=15, blank=True), blank=True, null=True)
+    artists = models.ManyToManyField(MangaArtist, verbose_name='Artists', blank=True)
+    poster = models.ImageField('Poster', upload_to=get_poster_path, blank=True, null=True)
+    rating = models.FloatField('Rating', default=0)
+    is_promoted = models.BooleanField('Recommended', default=False)
+
+    def __str__(self):
+        return str(self.english_name) + ' | ' + str(self.slug)
+
+    class Meta:
+        verbose_name = 'Manga'
+        verbose_name_plural = 'Mangas'
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.english_name)
         super(Manga, self).save(*args, **kwargs)
 
 
-class MangaPart(models.Model):
-    part = models.IntegerField('Часть')
-    volume = models.IntegerField('Том')
-    created_by = models.ForeignKey(User, verbose_name='Добавил', on_delete=models.CASCADE)
-    create_time = models.DateTimeField('Дата добавления', auto_now_add=True)
-    manga = models.ForeignKey(Manga, verbose_name='Манга', on_delete=models.CASCADE)
+class MangaVolume(models.Model):
+    volume = models.IntegerField('Volume')
+    create_time = models.DateTimeField('Upload date', auto_now_add=True)
+    created_by = models.ForeignKey(User, verbose_name='Uploaded by user', on_delete=models.SET(get_sentinel_user),
+                                   null=True)
+    manga = models.ForeignKey(Manga, verbose_name='Manga', on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = 'Часть'
-        verbose_name_plural = 'Части'
+        verbose_name = 'Manga volume'
+        verbose_name_plural = 'Manga volume'
+        unique_together = ('volume', 'manga')
 
     def __str__(self):
-        return str(self.manga) + ': ' + str(self.volume) + '-' + str(self.part)
+        return str(self.manga) + ': ' + str(self.volume)
 
 
 class MangaImage(models.Model):
-    part = models.ForeignKey(MangaPart, verbose_name='Часть', on_delete=models.CASCADE)
-    sort_index = models.IntegerField('Позиция в комиксе')
-    image = models.ImageField('Картинка манги', upload_to=get_manga_image_path)
+    volume = models.ForeignKey(MangaVolume, verbose_name='Volume', on_delete=models.CASCADE)
+    sort_index = models.IntegerField('position')
+    image = models.ImageField('Image', upload_to=get_manga_image_path)
 
     class Meta:
-        verbose_name = 'Картинка'
-        verbose_name_plural = 'Картинки'
+        verbose_name = 'Image'
+        verbose_name_plural = 'Images'
 
     def __str__(self):
-        return str(self.part.volume) + '-' + str(self.part.part) + ': картинка ' + str(self.sort_index)
+        return str(self.volume.manga.english_name) + ': Volume - ' + str(self.volume.volume) + ' image ' + str(
+            self.sort_index)
 
 
 @receiver(post_delete, sender=Manga)

@@ -14,6 +14,7 @@ export default {
       }
       commit('user/setToken', token);
       if (token) {
+        this.$axios.setToken('Token ' + token);
         let userData = null;
         try {
           userData = await this.$axios.$get('http://localhost:8000/api/v1/profile/me/');
@@ -21,9 +22,8 @@ export default {
           console.log(e)
         }
        if (userData){
-         commit('user/setUserData', userData.data[0].attributes);
+         commit('user/setUserData', userData.results[0]);
          commit('user/setAuth', true);
-         this.$axios.setToken('Token: ' + token);
        }
       }
     }

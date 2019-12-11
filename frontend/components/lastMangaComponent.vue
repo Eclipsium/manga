@@ -3,7 +3,7 @@
     class="mx-auto"
     elevation="4"
   >
-    <v-card-text class="title text-center">Последние обновления</v-card-text>
+    <v-card-text class="title text-center">Last update</v-card-text>
     <v-container>
       <v-row class="fill-height">
         <v-sheet
@@ -30,7 +30,7 @@
                     gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.9)"
                     @click="toMangaPage(manga.slug)"
                   >
-                    <v-card-title>{{manga.english_name}}: {{manga.volume}}-{{manga.part}}</v-card-title>
+                    <v-card-title>{{manga.english_name}}-{{manga.volume}}</v-card-title>
                     <v-expand-transition>
                       <div
                         v-if="hover"
@@ -53,11 +53,8 @@
                     </div>
                   </v-img>
                   <v-card-subtitle>
-                    Обновлено
+                    Updated
                     <span class="subtitle-2 green--text">{{ manga.date }}</span>
-                    пользователем
-                    <br>
-                    <a :href=getProfileUrl(manga.created_by) class="subtitle-2">{{manga.created_by}}</a>
                   </v-card-subtitle>
                 </v-card>
               </v-hover>
@@ -68,7 +65,7 @@
     </v-container>
     <v-card-actions align-content="center">
       <v-spacer></v-spacer>
-      <v-btn color="success" class="mb-3">Полный список</v-btn>
+      <v-btn color="success" class="mb-3">full list</v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
   </v-card>

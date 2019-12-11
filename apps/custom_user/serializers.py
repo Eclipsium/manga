@@ -10,7 +10,7 @@ class UserMeSerializer(serializers.ModelSerializer):
         fields = ("email", "full_name", "nickname", "is_staff", "avatar")
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("email", "full_name", "nickname", "avatar")

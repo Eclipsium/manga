@@ -27,6 +27,7 @@
     <v-app-bar
       app
       hide-on-scroll
+      dense
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-lg-and-up"/>
       <v-toolbar-title v-text="title"/>
@@ -46,12 +47,12 @@
       </v-toolbar-items>
       <v-spacer></v-spacer>
 
-      <v-toolbar-items class="hidden-md-and-down">
+      <v-toolbar-items class="hidden-md-and-down" v-if="avatar">
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
             <v-btn text v-on="on">
               <v-list-item>
-                <v-list-item-avatar>
+                <v-list-item-avatar size="36">
                   <v-img :src="avatar"/>
                 </v-list-item-avatar>
                 <v-list-item-subtitle>{{nickname}}</v-list-item-subtitle>
@@ -74,7 +75,7 @@
             <v-divider/>
             <v-list-item>
               <v-icon left color="error">mdi-exit-to-app</v-icon>
-              <v-list-item-title color="error">Выйти</v-list-item-title>
+              <v-list-item-title color="error">Exit</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -99,25 +100,25 @@
         loginItems: [
           {
             icon: 'mdi-home',
-            title: 'Главная',
+            title: 'Home',
             to: '/'
           },
           {
             icon: 'mdi-chart-bubble',
-            title: 'Каталог',
+            title: 'Catalog',
             to: '/catalog/'
           },
           {
             icon: 'mdi-card-search-outline',
-            title: 'Поиск',
+            title: 'Search',
             to: '/search/'
           }
         ],
         profileItems: [
-          {title: 'Мой профиль', to: '/profile/', icon: 'mdi-account'},
-          {title: 'Закладки', to: '/bookmarks/', icon: 'mdi-bookmark'},
+          {title: 'Profile', to: '/profile/', icon: 'mdi-account'},
+          {title: 'Bookmarks', to: '/bookmarks/', icon: 'mdi-bookmark'},
         ],
-        title: 'MangaExchange.ru'
+        title: 'Manga-exchange.ru'
       }
     },
     methods: {},

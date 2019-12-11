@@ -13,29 +13,63 @@
     <v-card-text>
       <v-row class="text-center">
         <v-col cols="12" md="4">
-          <v-text-field
-            :disabled="!changeNickName"
-            label="Имя"
-            :value="nickname"
-            prepend-icon="mdi-account"
-          >
-          </v-text-field>
-          <v-btn
-            color="primary darken-1"
-            v-if="!changeNickName"
-            @click="changeNickName=!changeNickName"
-          >
-            Изменить ник
-          </v-btn>
-          <v-btn
-            color="success"
-            v-if="changeNickName"
-            @click="changeNickName=!changeNickName"
-          >
-            Сохранить
-          </v-btn>
+          <v-form v-model="nickNameValid">
+            <v-text-field
+              :disabled="!changeNickName"
+              counter="20"
+              label="Ник"
+              v-model="nickNameForChange"
+              :value="nickname"
+              :rules="nameRules"
+              prepend-icon="mdi-account"
+            >
+            </v-text-field>
+            <v-btn
+              color="primary darken-1"
+              v-if="!changeNickName"
+              @click="changeNickName=!changeNickName"
+            >
+              Change nickname
+            </v-btn>
+            <v-btn
+              color="success"
+              v-if="changeNickName"
+              :disabled="!nickNameValid"
+              @click="submitNickName"
+            >
+              Save
+            </v-btn>
+          </v-form>
         </v-col>
 
+        <v-col cols="12" md="4">
+          <v-form v-model="fullNameValid">
+            <v-text-field
+              :disabled="!changeFullName"
+              label="Полное имя"
+              counter="20"
+              :rules="nameRules"
+              v-model="fullNameForChange"
+              prepend-icon="mdi-account-circle"
+            >
+            </v-text-field>
+            <v-btn
+              color="primary darken-1"
+              v-if="!changeFullName"
+              @click="changeFullName=!changeFullName"
+            >
+              Change full name
+            </v-btn>
+            <v-btn
+              color="success"
+              :disabled="!fullNameValid"
+              v-if="changeFullName"
+              @click="submitNickName()"
+            >
+              Save
+            </v-btn>
+          </v-form>
+        </v-col>
         <v-col cols="12" md="4">
           <v-form
             v-model="emailValid"
@@ -43,8 +77,8 @@
             <v-text-field
               :disabled="!changeEmail"
               :rules="emailRules"
-              label="Почта"
-              :value="email"
+              label="Email"
+              v-model="emailForChange"
               prepend-icon="mdi-email"
             >
             </v-text-field>
@@ -53,7 +87,7 @@
               v-if="!changeEmail"
               @click="changeEmail=!changeEmail"
             >
-              Изменить почту
+              Change email
             </v-btn>
             <v-btn
               color="success"
@@ -61,128 +95,9 @@
               v-if="changeEmail"
               @click="changeEmail=!changeEmail"
             >
-              Сохранить
+              Save
             </v-btn>
           </v-form>
-        </v-col>
-        <!--        Модульное окно смены пароля-->
-        <v-col cols="12" md="4" class="align-center">
-          <v-btn
-            class="mt-2"
-            color="warning"
-            dark
-            @click.stop="changePasswordDialog = true"
-          >
-            Изменить пароль
-          </v-btn>
-          <v-dialog
-            v-model="changePasswordDialog"
-            max-width="600px"
-
-          >
-            <v-card>
-              <v-card-title class="headline justify-center">Изменение пароля</v-card-title>
-              <v-card-text>
-                <v-form v-model="passwordValid">
-                  <v-col cols="12" sm="12" class="text-center">
-                    <v-text-field
-                      type="password"
-                      label="Старый пароль"
-                      :rules="passwordRules"
-                      v-model="oldPassword"
-                      prepend-icon="mdi-lock-alert"
-                      required
-                    >
-                    </v-text-field>
-
-                    <v-text-field
-                      type="password"
-                      label="Новый пароль"
-                      :rules="passwordRules"
-                      v-model="newPassword"
-                      prepend-icon="mdi-key"
-                      required
-                    >
-                    </v-text-field>
-
-                    <v-text-field
-                      type="password"
-                      label="Повторить новый пароль"
-                      :rules="[comparePassword]"
-                      v-model="newPasswordRepeat"
-                      prepend-icon="mdi-key"
-                      required
-                    >
-                    </v-text-field>
-
-                  </v-col>
-                </v-form>
-              </v-card-text>
-
-              <v-card-actions class="pb-4">
-                <v-btn
-                  class="ml-4"
-                  color="error"
-                  @click="changePasswordDialog = false"
-                >
-                  Отмена
-                </v-btn>
-                <v-spacer/>
-                <v-btn
-                  class="mr-4"
-                  color="success"
-                  @click="changePasswordDialog = false"
-                  :disabled="!passwordValid"
-                >
-                  Изменить пароль
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <br>
-          <v-btn
-            class="mt-4"
-            color="error"
-            dark
-            @click.stop="deleteProfileDialog = true"
-          >
-            Удалить аккаунт
-          </v-btn>
-          <v-dialog
-            v-model="deleteProfileDialog"
-            max-width="600px"
-          >
-            <v-card>
-              <v-card-title class="headline justify-center">Удаление аккаунта</v-card-title>
-              <v-card-text>
-                <v-col cols="12" sm="12">
-                  <span class="subtitle">Вы действительно хотите</span>
-                  <span class="error--text font-weight-bold text-uppercase">удалить</span>
-                  <span>свой аккаунт? Все ваши файлы, закладки и настройки будут</span>
-                  <span class="error--text font-weight-bold text-uppercase">полностью удалены</span>
-                  <span>без возможности восстановления.</span>
-                  <p>Удалить аккаунт?</p>
-                </v-col>
-              </v-card-text>
-              <v-card-actions class="pb-4">
-                <v-btn
-                  class="ml-4"
-                  color="success"
-                  @click="deleteProfileDialog = false"
-                >
-                  Отмена
-                </v-btn>
-                <v-spacer/>
-                <v-btn
-                  class="mr-4"
-                  color="error"
-                  @click="deleteProfileDialog = false"
-                >
-                  Удалить
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-col>
       </v-row>
       <v-snackbar
@@ -201,54 +116,83 @@
 
 <script>
   import {mapGetters} from 'vuex'
+
   export default {
     name: "profileMainConfig",
+    mounted() {
+      this.$axios.setToken('Token ' + this.token);
+      this.nickNameForChange = this.nickname;
+      this.emailForChange = this.email;
+      this.fullNameForChange = this.fullName
+    },
     data() {
       return {
         hasSaved: false,
         isEditing: null,
-        model: null,
         changeNickName: false,
+        nickNameForChange: null,
         changeEmail: false,
+        emailForChange: null,
+        changeFullName: false,
+        fullNameForChange: null,
         emailValid: true,
-        oldPassword: null,
-        newPassword: null,
-        newPasswordRepeat: null,
-        passwordValid: false,
-        changePasswordDialog: false,
-        deleteProfileDialog: false,
+        nickNameValid: true,
+        fullNameValid: true,
+        nameRules: [
+          v => !!v || 'Is required!',
+          v => (v && v.length <= 20) || 'Field must be 20 characters or less.',
+          v => (v && v.length > 5) || 'Field must be more then 5 characters.',
+          v => /^(?!\d)(?:(?![@#])[a-zA-Zа-яА-Я\d ])+$/.test(v) ||
+            'The field cannot contain special characters and begins with a digit'
+        ],
         emailRules: [
           v => !!v || 'Введите почту!',
-          v => /.+@.+\..+/.test(v) || 'Почта введена не правильно!'
-        ],
-        passwordRules: [
-          v => !!v || 'Введите пароль',
-          v => (v && v.length >= 6) || 'Пароль должен быть больше 6 символов!'
-        ],
-
-        states: [
-          {name: 'Florida', abbr: 'FL', id: 1},
-          {name: 'Georgia', abbr: 'GA', id: 2},
-          {name: 'Nebraska', abbr: 'NE', id: 3},
-          {name: 'California', abbr: 'CA', id: 4},
-          {name: 'New York', abbr: 'NY', id: 5},
+          v => /.+@.+\..+/.test(v) || 'Email is invalid!'
         ],
       }
     },
     computed: {
       comparePassword() {
-        return this.newPassword !== this.newPasswordRepeat ? 'Пароли не совпадают!' : null
+        return this.newPassword !== this.newPasswordRepeat ? 'Passwords are not equal!' : null
       },
       ...mapGetters({
-                   nickname: 'user/getUserNickName',
-                   email: 'user/getUserEmail',
-                 }),
+        nickname: 'user/getUserNickName',
+        email: 'user/getUserEmail',
+        fullName: 'user/getUserFullName',
+        token: 'user/getUserToken',
+      }),
     },
     methods: {
+      async submitNickName() {
+        try{
+          const data = await this.$axios.$put('http://localhost:8000/api/v1/profile/' + this.nickname + '/',
+            {
+              nickname: this.nickNameForChange,
+              email: this.emailForChange,
+              full_name: this.fullNameForChange,
+            });
+          this.$store.commit('user/setUserNickName', this.nickNameForChange);
+          this.$store.commit('user/setUserEmail', this.emailForChange);
+          this.$store.commit('user/setUserFullName', this.fullNameForChange);
+        }catch (e) {
+          console.log(e)
+        }
+        this.changeNickName = false;
+        this.changeFullName = false;
+        this.changeEmail = false;
+      }
     },
   }
 </script>
-
+setUserNickName(state, nickname){
+state.nickname = nickname
+},
+setUserEmail(state, email){
+state.email = email
+},
+setUserFullName(state, fullName){
+state.fullName = fullName
+},
 <style scoped>
 
 </style>
