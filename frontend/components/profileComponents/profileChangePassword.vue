@@ -1,0 +1,160 @@
+<template>
+  <v-card
+    class="overflow-hidden"
+  >
+    <v-toolbar
+      flat
+      color="warning"
+    >
+      <v-icon left color="white">mdi-lock-alert</v-icon>
+      <v-toolbar-title class="headline font-weight-regular white--text">
+        Управление паролем и аккаунтом
+      </v-toolbar-title>
+    </v-toolbar>
+    <v-card-text class="text-center">
+      <v-btn
+        class="mr-2"
+        color="warning"
+        dark
+        @click.stop="changePasswordDialog = true"
+      >
+        Изменить пароль
+      </v-btn>
+      <v-dialog
+        v-model="changePasswordDialog"
+        max-width="600px"
+
+      >
+        <v-card>
+          <v-card-title class="headline justify-center">Изменение пароля</v-card-title>
+          <v-card-text>
+            <v-form v-model="passwordValid">
+              <v-col cols="12" sm="6" class="text-center">
+                <v-text-field
+                  type="password"
+                  label="Старый пароль"
+                  :rules="passwordRules"
+                  v-model="oldPassword"
+                  prepend-icon="mdi-lock-alert"
+                  required
+                >
+                </v-text-field>
+
+                <v-text-field
+                  type="password"
+                  label="Новый пароль"
+                  :rules="passwordRules"
+                  v-model="newPassword"
+                  prepend-icon="mdi-key"
+                  required
+                >
+                </v-text-field>
+
+                <v-text-field
+                  type="password"
+                  label="Повторить новый пароль"
+                  :rules="[comparePassword]"
+                  v-model="newPasswordRepeat"
+                  prepend-icon="mdi-key"
+                  required
+                >
+                </v-text-field>
+
+              </v-col>
+            </v-form>
+          </v-card-text>
+          <v-card-actions class="pb-4">
+            <v-btn
+              class="ml-4"
+              color="error"
+              @click="changePasswordDialog = false"
+            >
+              Отмена
+            </v-btn>
+            <v-spacer/>
+            <v-btn
+              class="mr-4"
+              color="success"
+              @click="changePasswordDialog = false"
+              :disabled="!passwordValid"
+            >
+              Изменить пароль
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-btn
+        class="ml-2"
+        color="error"
+        dark
+        @click.stop="deleteProfileDialog = true"
+      >
+        Удалить аккаунт
+      </v-btn>
+      <v-dialog
+        v-model="deleteProfileDialog"
+        max-width="600px"
+      >
+        <v-card>
+          <v-card-title class="headline justify-center">Удаление аккаунта</v-card-title>
+          <v-card-text>
+            <v-col cols="12" sm="12">
+              <span class="subtitle">Вы действительно хотите</span>
+              <span class="error--text font-weight-bold text-uppercase">удалить</span>
+              <span>свой аккаунт? Все ваши файлы, закладки и настройки будут</span>
+              <span class="error--text font-weight-bold text-uppercase">полностью удалены</span>
+              <span>без возможности восстановления.</span>
+              <p>Удалить аккаунт?</p>
+            </v-col>
+          </v-card-text>
+          <v-card-actions class="pb-4">
+            <v-btn
+              class="ml-4"
+              color="success"
+              @click="deleteProfileDialog = false"
+            >
+              Отмена
+            </v-btn>
+            <v-spacer/>
+            <v-btn
+              class="mr-4"
+              color="error"
+              @click="deleteProfileDialog = false"
+            >
+              Удалить
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-card-text>
+  </v-card>
+</template>
+
+<script>
+  export default {
+    name: "profileChangePassword",
+    data() {
+      return {
+        oldPassword: null,
+        newPassword: null,
+        newPasswordRepeat: null,
+        passwordValid: false,
+        changePasswordDialog: false,
+        deleteProfileDialog: false,
+        passwordRules: [
+          v => !!v || 'Введите пароль',
+          v => (v && v.length >= 6) || 'Пароль должен быть больше 6 символов!'
+        ],
+      }
+    },
+    computed: {
+      comparePassword() {
+        return this.newPassword !== this.newPasswordRepeat ? 'Пароли не совпадают!' : null
+      },
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>
