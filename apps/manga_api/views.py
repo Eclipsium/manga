@@ -1,5 +1,6 @@
 # Create your views here.
 from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, filters
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -19,18 +20,30 @@ class MangaArtistViewSet(viewsets.ModelViewSet):
 
 
 class MangaViewSet(viewsets.ModelViewSet):
-    queryset = Manga.objects.all()
+    queryset = Manga.objects.filter()
     serializer_class = MangaSerializer
-    search_fields = ['japan_name', 'english_name']
-    filter_backends = (filters.SearchFilter,)
+    search_fields = ['japan_name', 'english_name', 'artists__name', 'categories']
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
     permission_classes = [IsAdminUserOrReadOnly, ]
     lookup_field = 'slug'
+    ordering_fields = ['rating']
+    filterset_fields = ()  # here
+
+
+class MangaFilterView(generics.ListAPIView):
+    serializer_class = MangaHomePageSerializer
+    filter_backends = [DjangoFilterBackend]
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = MangaHomePageSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class MangaListView(generics.ListAPIView):
     queryset = Manga.objects.all()
     serializer_class = MangaListSerializer
-    permission_classes = [AllowAny,]
+    permission_classes = [AllowAny, ]
     search_fields = ['japan_name', 'english_name']
     filter_backends = (filters.SearchFilter,)
 

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # REST API приложения
+    'django_filters',
     'corsheaders',
     'rest_framework',
     'djoser',

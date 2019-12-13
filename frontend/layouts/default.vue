@@ -106,7 +106,7 @@
           {
             icon: 'mdi-chart-bubble',
             title: 'Catalog',
-            to: '/catalog/'
+            to: '/manga/'
           },
           {
             icon: 'mdi-card-search-outline',
