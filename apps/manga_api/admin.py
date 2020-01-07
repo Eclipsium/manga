@@ -19,7 +19,8 @@ class MangaAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(MangaArtist)
+@admin.register(MangaArchive)
 class MangaAdmin(admin.ModelAdmin):
     pass
+
 

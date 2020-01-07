@@ -7,6 +7,9 @@
         <v-row class="justify-center">
           <p class="display-1">
             {{mangaData.english_name}}
+            <v-icon large color="warning" v-if="recommend">
+              mdi-fire
+            </v-icon>
           </p>
           <p class="subtitle" v-if="mangaData.japan_name">
             {{mangaData.japan_name}}
@@ -22,77 +25,45 @@
           />
         </v-row>
         <v-row class="justify-center align-center mt-3">
-          <span class="title">Rating: </span>
           <v-rating
-            v-model="mangaData.rating"
-            background-color="orange lighten-3"
-            color="orange"
+            v-model="tempRating"
+            :readonly="isVoted || !$store.state.user.isAuth || voted"
+            color="yellow darken-3"
+            background-color="grey darken-1"
+            hover
           />
+          <span class="subtitle">({{mangaData.rating}}) {{votes.count}} votes</span>
         </v-row>
-        <v-row class="justify-center align-center">
-          <span>Votes: 152</span>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn small icon v-on="on" class="ml-2" color="error">
-                <v-icon>
-                  mdi-chart-areaspline-variant
-                </v-icon>
-              </v-btn>
-            </template>
-            <span>See all votes</span>
-          </v-tooltip>
-        </v-row>
-        <v-row class="justify-center mt-3">
-          <v-btn color="info" @click="toAddPage()">
-            <v-icon left>mdi-book</v-icon>
-            Add new parts
+        <v-row
+          v-if="$store.state.user.isAdmin"
+          class="justify-center align-center mt-2">
+          <v-btn dark color="purple lighten-1" v-if="!recommend" @click="submitRecommend">
+            recommend
+          </v-btn>
+          <v-btn dark color="purple lighten-1"  v-if="recommend" @click="submitRecommend">
+            not recommend
           </v-btn>
         </v-row>
       </v-col>
       <v-col
-        cols="12"
+        cols=" 12
+        "
         md="6">
         <v-row>
           <p class="title">Description:</p>
           <p>{{mangaData.descriptions}}</p>
         </v-row>
-        <!--        <v-row>-->
-        <!--          <p class="title">Томов: {{manga.volume}}</p>-->
-        <!--        </v-row>-->
-        <!--        <v-row>-->
-        <!--          <p class="title">Последний выпуск: {{manga.volume}} - {{ manga.part}}</p>-->
-        <!--        </v-row>-->
-        <!--        <v-row>-->
-        <!--          <v-btn color="success" :to="'/read/' + manga.slug +'/'+ manga.volume +'/' + manga.part">-->
-        <!--            <v-icon left>mdi-new-box</v-icon>-->
-        <!--            Читать последний выпуск-->
-        <!--          </v-btn>-->
-        <!--        </v-row>-->
-        <v-row>
+        <v-row v-if="this.mangaData.artists[0]">
           <p class="title mr-4 align-center">Artists: </p>
           <v-chip
             color="primary"
             class="ma-2 align-center"
-            v-for="artist in mangaData.artists" :key="artist.name"
-            @click=toArtistPage(artist.slug)
+            v-for="artist in this.mangaData.artists[0].split(',')" :key="artist"
+            @click=toArtistPage(artist)
             label
           >
-            {{artist.name}}
+            {{artist}}
           </v-chip>
-        </v-row>
-        <p>{{ mangaData.data}}</p>
-        <v-row class="align-center">
-          <v-chip-group
-            column
-          >
-            <p class="title mr-4">Categories: </p>
-            <v-chip
-              v-for="tag in mangaData.categories" :key="tag"
-              label
-            >
-              {{tag}}
-            </v-chip>
-          </v-chip-group>
         </v-row>
         <v-row>
           <p class="title">List of parts:</p>
@@ -102,7 +73,6 @@
           :items="mangaVolumes"
           max-height="350"
           item-key="name"
-          hide-default-footer
           class="elevation-1"
           :sort-by="['volume']"
           :sort-desc="[false]"
@@ -111,20 +81,40 @@
             <a href="#">{{item.created_by}}</a>
           </template>
           <template v-slot:item.action="{ item }">
-            <v-icon
+            <v-btn
+              icon
+              v-if="item.image_count"
               color="success"
               @click="readMangaItem(item)"
             >
-              mdi-book-open-page-variant
-            </v-icon>
+              <v-icon
+              >
+                mdi-book-open-page-variant
+              </v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              v-if="!item.image_count"
+              color="warning"
+              loading
+            >
+            </v-btn>
           </template>
         </v-data-table>
+        <div class='text-center mt-4'>
+          <v-btn
+            color="primary"
+            @click="$router.push('add/')"
+          >
+            Add manga volume
+          </v-btn>
+        </div>
       </v-col>
     </v-row>
     <v-row
       class="fill-height"
     >
-      <v-dialog v-model="dialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
+      <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
         <v-card>
           <v-toolbar dark dense flat>
             <v-toolbar-title>{{mangaData.english_name}}</v-toolbar-title>
@@ -144,7 +134,7 @@
               v-model="currentImageIndex"
             >
               <v-carousel-item
-                v-for="(item, index) in items"
+                v-for="(item, index) in volumeImages"
                 :key="index"
               >
                 <template v-slot:default>
@@ -157,6 +147,15 @@
                       contain
                       :position="getPosition(index)"
                     >
+                      <template v-slot:placeholder>
+                        <v-row
+                          class="fill-height ma-0"
+                          align="center"
+                          justify="center"
+                        >
+                          <v-progress-circular indeterminate color="grey lighten-5"/>
+                        </v-row>
+                      </template>
                     </v-img>
                     <v-img
                       :src="getImageFromIndex(index+1)"
@@ -167,6 +166,15 @@
                       contain
                       :position="getPosition(index+1)"
                     >
+                      <template v-slot:placeholder>
+                        <v-row
+                          class="fill-height ma-0"
+                          align="center"
+                          justify="center"
+                        >
+                          <v-progress-circular indeterminate color="grey lighten-5"/>
+                        </v-row>
+                      </template>
                     </v-img>
                   </div>
                 </template>
@@ -180,21 +188,26 @@
 </template>
 
 <script>
-  import mangaReader from "../../../components/mangaReader";
+  import {mapGetters} from 'vuex'
 
   export default {
     name: "index",
-    components: {
-      mangaReader
-    },
     async asyncData({$axios, params}) {
       try {
         const mangaData = await $axios.$get('/api/v1/manga/' + params.slug + "/");
         const mangaVolumes = await $axios.$get('/api/v1/manga/' + params.slug + '/volumes/');
-        return {mangaData, mangaVolumes}
+        const votes = await $axios.$get('/api/v1/votes/?manga__slug=' + params.slug);
+        return {mangaData, mangaVolumes, votes}
       } catch (e) {
         console.log('Server error!')
       }
+    },
+    mounted() {
+      if(this.token){
+        this.$axios.setToken('Token ' + this.token);
+      }
+      this.tempRating = this.mangaData.rating;
+      this.recommend = this.mangaData.is_promoted;
     },
     watch: {
       //Округляем индекс при прокрутке в 2х страничном режиме
@@ -202,9 +215,29 @@
         if (this.isHorizontal) {
           this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2
         }
+      },
+      //Update rating value
+      tempRating() {
+        let payload = {
+          'manga': this.mangaData.id,
+          'vote_int': this.tempRating
+        };
+        if (this.tempRating !== 0 && !this.isVoted && this.token) {
+          this.$axios.$post('/api/v1/votes/', payload);
+          this.voted = true
+        }
       }
     },
     computed: {
+      isVoted() {
+        for (let index in this.votes.results) {
+          if (this.votes.results[index].user === this.nickname) {
+            this.tempRating = this.votes.results[index].vote_int;
+            return true
+          }
+        }
+        return false
+      },
       //Динамически меняем размер картинки
       imageHeight() {
         if (this.isHorizontal) {
@@ -228,10 +261,15 @@
       },
       //Корректное отображение стрелки вперед
       hasNextArrow() {
-        if (this.isHorizontal && this.items.length - this.currentImageIndex > 2) {
+        if (this.isHorizontal && this.volumeImages.length - this.currentImageIndex > 2) {
           return true
-        } else return !this.isHorizontal && this.items.length - this.currentImageIndex >= 1;
+        } else return !this.isHorizontal && this.volumeImages.length - this.currentImageIndex >= 1;
       },
+      ...mapGetters({
+        token: 'user/getUserToken',
+        nickname: 'user/getUserNickName',
+        volumeImages: 'image/getVolumeImage'
+      })
     },
     methods: {
       //Method for switch carousel page with horizontal offset
@@ -244,16 +282,20 @@
           return 'left center'
         }
       },
+      submitRecommend(){
+        this.recommend = !this.recommend;
+        this.$axios.$patch('/api/v1/manga/' + this.mangaData.slug + "/", {'is_promoted': this.recommend})
+      },
       toNextImage() {
         if (this.isHorizontal) {
-          if (this.items.length - this.currentImageIndex > 2) {
+          if (this.volumeImages.length - this.currentImageIndex > 2) {
             this.currentImageIndex += 2;
           } else {
             this.closeDialog()
           }
         }
         if (!this.isHorizontal) {
-          if (this.items.length - this.currentImageIndex > 1) {
+          if (this.volumeImages.length - this.currentImageIndex > 1) {
             this.currentImageIndex += 1;
           } else {
             this.closeDialog()
@@ -262,63 +304,36 @@
       },
       getImageFromIndex(index) {
         try {
-          return this.items[index].src
+          return this.volumeImages[index]
         } catch (TypeError) {
-          return undefined
+          return ''
         }
       },
-      toAddPage() {
-        this.$router.push('add/')
-      }
-      ,
       readMangaItem(item) {
-        this.currentVolume = item.volume;
-        this.dialog = true
-      }
-      ,
-      toArtistPage(slug) {
-        this.$router.push('/artist/' + slug + '/')
-      }
-      ,
+        this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
+        this.readMangaDialog = true
+      },
+      toArtistPage(artist) {
+        this.$router.push('/artist/' + artist + '/')
+      },
       closeDialog() {
-        this.dialog = false;
+        this.readMangaDialog = false;
         this.currentVolume = null;
         this.currentImageIndex = null;
-      }
+      },
     }
     ,
     data: () => ({
-      dialog: false,
+      voted: false,
+      recommend: false,
+      readMangaDialog: false,
+      addMangaDialog: false,
       currentVolume: null,
       currentImageIndex: null,
-      items: [
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://h22.mangas.rocks/auto/15/39/34/01_p03.jpg?t=1575955621&u=0&h=aSU9JUm3YqGun8OB0P0BBg',
-        },
-        {
-          src: 'https://static.readmanga.me/uploads/pics/01/36/510_o.jpg',
-        },
+      tempRating: 0,
+      digitRules: [
+        v => !!v || 'Is required',
+        v => /^\d+$/.test(v) || 'Input digit!'
       ],
       headers: [
         {text: 'Manga volume', value: 'volume', align: 'center',},

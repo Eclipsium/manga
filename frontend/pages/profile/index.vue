@@ -1,17 +1,19 @@
 <template>
   <v-container fluid>
-    <v-container>
-      <profileMainConfig/>
-    </v-container>
-    <v-container>
-      <profilePhoto/>
-    </v-container>
-    <v-container>
-      <profileChangePassword></profileChangePassword>
-    </v-container>
-    <v-container>
-      <profileBookmark></profileBookmark>
-    </v-container>
+    <client-only>
+      <v-container>
+        <profileMainConfig/>
+      </v-container>
+      <v-container>
+        <profilePhoto/>
+      </v-container>
+      <v-container>
+        <profileChangePassword></profileChangePassword>
+      </v-container>
+      <v-container>
+        <profileBookmark></profileBookmark>
+      </v-container>
+    </client-only>
   </v-container>
 </template>
 

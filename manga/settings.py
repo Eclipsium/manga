@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.utils.translation import gettext_noop
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -49,7 +51,9 @@ INSTALLED_APPS = [
 
     # Установленные приложения
     'apps.profile_api',
+    'apps.rating_api',
     'apps.manga_api.apps.MangaApiConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -70,11 +74,21 @@ AUTHENTICATION_BACKENDS = (
 
 )
 
+DJOSER = {
+    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    # 'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+        'user': 'apps.custom_user.serializers.UserDetailSerializer',
+        'current_user': 'apps.custom_user.serializers.UserMeSerializer',
+        'user_create': 'apps.custom_user.serializers.UserRegistrationSerializer'
+    }
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'PAGE_SIZE': 100,
+    'PAGE_SIZE': 1000,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -110,7 +124,7 @@ ROOT_URLCONF = 'manga.urls'
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 AUTH_USER_MODEL = 'custom_user.User'
 SITE = 1
@@ -176,8 +190,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
+MAX_UPLOAD_SIZE = "214958080"
 
-LANGUAGE_CODE = 'en-EN'
+LANGUAGES = [
+    ('ru', gettext_noop('Russian')),
+    ('en', gettext_noop('English')),
+    ('ko', gettext_noop('Korean')),
+]
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
@@ -189,5 +209,3 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-STATIC_URL = '/static/'

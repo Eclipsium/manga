@@ -1,107 +1,354 @@
 <template>
-  <v-stepper v-model="step" vertical>
-    <v-stepper-step editable :complete="step > 1" step="1">
-      Выберите существуюшую мангу
-      <small>или создайте новую</small>
-    </v-stepper-step>
+  <v-card
+    class="overflow-hidden"
+  >
+    <v-toolbar
+      flat
+      color="primary"
+    >
+      <v-icon left color="white">mdi-book-plus</v-icon>
+      <v-toolbar-title class="headline font-weight-regular white--text">
+        Add new Manga
+      </v-toolbar-title>
+    </v-toolbar>
+    <v-card-text class="text-center">
+      <v-container>
+        <v-form v-model="isValid">
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="English name"
+                v-model="engName"
+                :rules="nameRules"
+                :disabled="isComplete"
+                outlined
+              />
+            </v-col>
+            <v-col cols="12" md="2">
+              <v-checkbox
+                v-model="hasJapanTitle"
+                :disabled="isComplete"
+                label="Has japan title?"
+              >
+              </v-checkbox>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                label="Japan name (optional)"
+                :disabled="!hasJapanTitle || isComplete"
+                v-model="jpnName"
+                :rules="hasJapanTitle ? jpnNameRules: []"
+                outlined
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="12">
+              <v-textarea
+                v-model="descriptions"
+                :disabled="isComplete"
+                :rules="descRules"
+                outlined
+                label="Descriptions"
+              />
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="12" md="3">
+              <v-card
+                flat
+              >
+                <v-img
+                  :aspect-ratio="9/16"
+                  max-height="300"
+                  contain
+                  :src="imagePreview" v-if="showPreview"
+                >
+                </v-img>
+              </v-card>
+              <v-card
+                v-if="!showPreview"
+                onclick="document.getElementById('imageForm').click()"
+                flat
+                height="300"
+                color="grey lighten-3"
+                class="d-flex align-center justify-center clickable"
+              >
+                <v-icon notranslate style="font-size: 64px;">mdi-image</v-icon>
+                <v-subheader>Image preview</v-subheader>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="9">
+              <v-file-input
+                @change="handleFileUpload($event)"
+                :rules="imageRules"
+                :disabled="isComplete"
+                type="file"
+                ref="imageForm"
+                id="imageForm"
+                outlined
+                accept="image/png, image/jpeg, image/bmp"
+                placeholder="Pick manga poster"
+                prepend-icon="mdi-camera"
+                label="Manga poster"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="12">
+              <v-combobox
+                v-model="model"
+                :filter="filter"
+                :hide-no-data="!search"
+                :items="items"
+                :search-input.sync="search"
+                :disabled="isComplete"
+                :rules="artistsRules"
+                hide-selected
+                label="Add artists"
+                multiple
+                outlined
+                small-chips
+                clearable
+              >
+                <template v-slot:no-data>
+                  <v-list-item>
+                    <span class="subheading">For create</span>
+                    <v-chip
+                      :color="`${colors[nonce - 1]} lighten-3`"
+                      label
+                      small
+                    >
+                      {{ search }}
+                    </v-chip>
+                    <span>press Enter</span>
+                  </v-list-item>
+                </template>
+                <template v-slot:selection="{ attrs, item, parent, selected }">
+                  <v-chip
+                    v-if="item === Object(item)"
+                    v-bind="attrs"
+                    :color="`${item.color} lighten-3`"
+                    :input-value="selected"
+                    label
+                    small
+                  >
+                    <span class="pr-2">
+                      {{ item.text }}
+                    </span>
+                    <v-icon
+                      small
+                      @click="parent.selectItem(item)"
+                    >mdi-close
+                    </v-icon>
+                  </v-chip>
+                </template>
+              </v-combobox>
+            </v-col>
+          </v-row>
+        </v-form>
 
-    <v-stepper-content step="1">
-      <v-card class="mb-12">
-        <v-card-text>
-          выбор манги
-        </v-card-text>
-      </v-card>
-      <v-btn color="success" class="mr-2" @click="step = 2">Далее</v-btn>
-      <v-btn text>отмена</v-btn>
-    </v-stepper-content>
-
-    <v-stepper-step :complete="step > 2" step="2">Выберите том и часть</v-stepper-step>
-
-    <v-stepper-content step="2">
-      <v-btn color="success" class="mr-2" @click="step = 3">Далее</v-btn>
-      <v-btn text>отмена</v-btn>
-    </v-stepper-content>
-
-    <v-stepper-step :complete="step > 3" step="3">Выберите вариант загрузки</v-stepper-step>
-    <v-stepper-content step="3">
-      <v-tabs
-        v-model="tab"
-        grow
-      >
-        <v-tab
-          v-for="item in tabItems"
-          :key="item.text"
+        <v-btn
+          large
+          color="primary"
+          :disabled="!model.length > 0 || !isValid"
+          :loading="isLoading"
+          @click="submit"
         >
-          <v-icon left>{{item.icon}}</v-icon>
-          {{ item.text }}
-        </v-tab>
-      </v-tabs>
-
-      <v-tabs-items v-model="tab">
-        <v-tab-item
-          v-for="item in tabItems"
-          :key="item.text"
+          <v-icon left>
+            mdi-book-plus
+          </v-icon>
+          Add
+        </v-btn>
+        <v-snackbar
+          v-model="isComplete"
+          :color="!mangaMessage ? 'success' : 'error'"
+          multi-line
         >
-          <v-card flat>
-            <v-card-text>{{ item.text }}</v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
-      <v-btn color="success" class="mr-2" @click="step = 4">Далее</v-btn>
-      <v-btn text>отмена</v-btn>
-    </v-stepper-content>
-
-    <v-stepper-step step="4">View setup instructions</v-stepper-step>
-    <v-stepper-content step="4">
-      <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
-      <v-btn color="primary" @click="step = 1">Continue</v-btn>
-      <v-btn text>Cancel</v-btn>
-    </v-stepper-content>
-  </v-stepper>
+          <p class="text-center">
+            {{!mangaMessage ? 'Manga created!' : mangaMessage }}
+          </p>
+          <v-btn
+            v-if="!mangaMessage"
+            color="success"
+            text
+            @click="toMangaPage()"
+          >
+            To manga page
+          </v-btn>
+        </v-snackbar>
+      </v-container>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
+
   export default {
     name: "index",
-    data() {
-      return {
-        step: 1,
-        model: null,
-        isLoading: false,
-        search: null,
-        tab: null,
-        tabItems: [
-          {'text': 'Вручную', 'icon': 'mdi-hand'},
-          {'text': 'Архивом', 'icon': 'mdi-archive'},
-          {'text': 'PDF файлом', 'icon': 'mdi-file-pdf-box'},
-        ],
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et ' +
-          'dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ' +
-          'ea commodo consequat.',
-        mangas: [
-          {
-            "type": "Manga",
-            "id": "2",
-            "attributes": {
-              "russian_name": "asdasdasdasd",
-              "english_name": "asdasdasdasd"
-            }
-          },
-          {
-            "type": "Manga",
-            "id": "1",
-            "attributes": {
-              "russian_name": "Дракон и Феникс",
-              "english_name": "Dragon and Phoenix"
-            }
+    middleware: 'auth',
+    data: () => ({
+      text: '',
+      isValid: true,
+      hasJapanTitle: false,
+      isLoading: false,
+      engName: '',
+      jpnName: '',
+      descriptions: '',
+      imageRules: [
+        v => !!v || 'Is required',
+        v => !v || v.size < 4000000 || 'Poster should less than 4 MB! !',
+      ],
+      descRules: [
+        v => !!v || 'Is required',
+        v => (v && v.length >= 20) || 'Field must be 20 characters or more.',
+        v => (v && v.length < 500) || 'Field must be 20 characters or less.',
+      ],
+      nameRules: [
+        v => !!v || 'Is required!',
+        v => (v && v.length <= 50) || 'Field must be 20 characters or less.',
+        v => (v && v.length > 4) || 'Field must be more then 4 characters.',
+      ],
+      jpnNameRules: [
+        v => (v && v.length <= 50) || 'Field must be 20 characters or less.',
+        v => (v && v.length > 2) || 'Field must be more then 2 characters.',
+        v => /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B/g
+            .test(v) ||
+          'The field must contain hieroglyphs'
+      ],
+      artistsRules: [
+        v => !!v || 'Is required!',
+      ],
+      activator: null,
+      attach: null,
+      colors: ['green', 'purple', 'indigo', 'cyan', 'teal', 'orange'],
+      index: -1,
+      items: [
+        {header: 'Select an option or create one'},
+      ],
+      nonce: 1,
+      model: [],
+      x: 0,
+      search: null,
+      y: 0,
+      file: '',
+      showPreview: false,
+      imagePreview: '',
+      isComplete: false,
+    }),
+    methods: {
+      toMangaPage() {
+        this.$router.push({path: `/manga/${this.mangaSlug}`})
+      },
+      submit() {
+        this.isLoading = true;
+        this.$store.commit('manga/setMangaMessage', '');
+        let artists = [];
+        for (let index in this.model) {
+          artists.push(this.model[index]['text'])
+        }
+        let payload = {
+          'english_name': this.engName,
+          'japan_name': this.jpnName,
+          'descriptions': this.descriptions,
+          'poster': this.file,
+          'artists': artists,
+        };
+        this.$axios.setToken('Token ' + this.token);
+        this.$store.dispatch('manga/SUBMIT_MANGA_ADD_FORM', payload);
+        this.isComplete = true;
+        this.isLoading = false;
+        setTimeout(() => {
+          this.$router.push('/manga/' + this.mangaSlug + '/')
+        }, 2000);
+      },
+      filter(item, queryText, itemText) {
+        if (item.header) return false;
+
+        const hasValue = val => val != null ? val : '';
+
+        const text = hasValue(itemText);
+        const query = hasValue(queryText);
+
+        return text.toString()
+          .toLowerCase()
+          .indexOf(query.toString().toLowerCase()) > -1
+      },
+      handleFileUpload(file) {
+        /*
+          Set the local file variable to what the user has selected.
+        */
+        this.file = file;
+
+        /*
+          Initialize a File Reader object
+        */
+        let reader = new FileReader();
+
+        /*
+          Add an event listener to the reader that when the file
+          has been loaded, we flag the show preview as true and set the
+          image to be what was read from the reader.
+        */
+        reader.addEventListener("load", function () {
+          this.showPreview = true;
+          this.imagePreview = reader.result;
+        }.bind(this), false);
+
+        /*
+          Check to see if the file is not empty.
+        */
+        if (this.file) {
+          /*
+            Ensure the file is an image file.
+          */
+          if (/\.(jpe?g|png|gif)$/i.test(this.file.name)) {
+            /*
+              Fire the readAsDataURL method which will read the file in and
+              upon completion fire a 'load' event which we will listen to and
+              display the image in the preview.
+            */
+            reader.readAsDataURL(this.file);
           }
-        ],
-        computed: {},
+        }
       }
+    }
+    ,
+    computed: {
+      ...
+        mapGetters({
+          token: 'user/getUserToken',
+          mangaSlug: 'manga/getSlugOfAddManga',
+          mangaMessage: 'manga/getMangaMessage'
+        })
+    }
+    ,
+    watch: {
+      model(val, prev) {
+        if (val.length === prev.length) return;
+
+        this.model = val.map(v => {
+          if (typeof v === 'string') {
+            v = {
+              text: v,
+              color: this.colors[this.nonce - 1],
+            };
+
+            this.items.push(v);
+
+            this.nonce++
+          }
+
+          return v
+        })
+      },
     },
   }
 </script>
 
 <style scoped>
-
+  .clickable {
+    cursor: pointer;
+  }
 </style>

@@ -1,0 +1,9 @@
+CELERY COMMAND
+
+rabbitmqctl add_user manga mangapassword
+rabbitmqctl add_vhost mangahost
+rabbitmqctl set_permissions -p mangahost manga ".*" ".*" ".
+
+celery worker -A apps.manga_api --loglevel=info --concurrency=1
+
+

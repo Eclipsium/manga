@@ -1,18 +1,16 @@
 import os
 import uuid
-from datetime import datetime
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
-
-from django.contrib.postgres.fields import ArrayField
 from pytils.translit import slugify
 
-from apps.manga_api.categories import MANGA_CATEGORIES
+from apps.manga_api.validators import validate_file_size_and_ext
 
 User = get_user_model()
 
@@ -42,6 +40,14 @@ def get_poster_path(instance, filename):
     return os.path.join('posters/', instance.slug, filename)
 
 
+def get_archive_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('archive/', str(instance.manga.slug),
+                        'volume ' + str(instance.volume),
+                        filename)
+
+
 def get_manga_image_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
@@ -53,31 +59,14 @@ def get_sentinel_user():
     return get_user_model().objects.get_or_create(username='deleted')[0]
 
 
-class MangaArtist(models.Model):
-    name = models.CharField('Artist name', max_length=100, unique=True)
-    slug = models.SlugField('url', unique=True, blank=True, null=True)
-
-    def __str__(self):
-        return str(self.name)
-
-    class Meta:
-        verbose_name = 'Artist'
-        verbose_name_plural = 'Artists'
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(MangaArtist, self).save(*args, **kwargs)
-
-
 class Manga(models.Model):
+    create_by_user = models.ForeignKey(User, verbose_name='Create by user', on_delete=models.SET(get_sentinel_user))
     japan_name = models.CharField('Japan title', max_length=100, null=True, blank=True)
-    english_name = models.CharField('English title', max_length=100)
+    english_name = models.CharField('English title', max_length=100, unique=True)
     descriptions = models.TextField('Description', max_length=500)
-    slug = models.SlugField('url', unique=True, blank=True)
-    categories = ChoiceArrayField(
-        models.CharField(choices=MANGA_CATEGORIES, max_length=15, blank=True), blank=True, null=True)
-    artists = models.ManyToManyField(MangaArtist, verbose_name='Artists', blank=True)
-    poster = models.ImageField('Poster', upload_to=get_poster_path, blank=True, null=True)
+    slug = models.SlugField('url', unique=True, blank=True, null=True)
+    artists = ArrayField(models.CharField(verbose_name='Artists', max_length=200), blank=True, null=True)
+    poster = models.ImageField('Poster', upload_to=get_poster_path, blank=True  )
     rating = models.FloatField('Rating', default=0)
     is_promoted = models.BooleanField('Recommended', default=False)
 
@@ -123,9 +112,29 @@ class MangaImage(models.Model):
             self.sort_index)
 
 
+class MangaArchive(models.Model):
+    manga = models.ForeignKey(Manga, null=True, verbose_name='Manga', on_delete=models.CASCADE)
+    volume = models.IntegerField('volume', default=1)
+    archive = models.FileField('Archive', upload_to=get_archive_path, validators=[validate_file_size_and_ext])
+
+    class Meta:
+        verbose_name = 'Archive'
+        verbose_name_plural = 'Archives'
+
+    def __str__(self):
+        return str(self.manga.slug) + ' - ' + str(self.volume)
+
+
+# Delete manga poster in media after delete manga object
 @receiver(post_delete, sender=Manga)
 def delete_img_from_media(sender, instance, **kwargs):
     os.remove(os.path.join(settings.MEDIA_ROOT, instance.poster.name))
+
+
+# Delete manga archive in media after delete archive object
+@receiver(post_delete, sender=MangaArchive)
+def delete_arch_from_media(sender, instance, **kwargs):
+    os.remove(os.path.join(settings.MEDIA_ROOT, instance.archive.name))
 
 
 @receiver(pre_save, sender=Manga)

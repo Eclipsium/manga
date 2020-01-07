@@ -26,13 +26,13 @@
 
       >
         <v-card>
-          <v-card-title class="headline justify-center">Изменение пароля</v-card-title>
+          <v-card-title class="headline justify-center">Change password</v-card-title>
           <v-card-text>
             <v-form v-model="passwordValid">
               <v-col cols="12" sm="6" class="text-center">
                 <v-text-field
                   type="password"
-                  label="Старый пароль"
+                  label="Old password"
                   :rules="passwordRules"
                   v-model="oldPassword"
                   prepend-icon="mdi-lock-alert"
@@ -42,7 +42,7 @@
 
                 <v-text-field
                   type="password"
-                  label="Новый пароль"
+                  label="New password"
                   :rules="passwordRules"
                   v-model="newPassword"
                   prepend-icon="mdi-key"
@@ -52,7 +52,7 @@
 
                 <v-text-field
                   type="password"
-                  label="Повторить новый пароль"
+                  label="Repeat new password"
                   :rules="[comparePassword]"
                   v-model="newPasswordRepeat"
                   prepend-icon="mdi-key"
@@ -96,7 +96,7 @@
         max-width="600px"
       >
         <v-card>
-          <v-card-title class="headline justify-center">Удаление аккаунта</v-card-title>
+          <v-card-title class="headline justify-center">Delete account</v-card-title>
           <v-card-text>
             <v-col cols="12" sm="12">
               <span class="subtitle">Вы действительно хотите</span>

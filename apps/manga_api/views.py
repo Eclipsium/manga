@@ -1,43 +1,29 @@
 # Create your views here.
-from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics, filters
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework import viewsets, generics, filters, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.manga_api.models import Manga, MangaVolume, MangaArtist
+from apps.manga_api.models import Manga, MangaVolume, MangaArchive, MangaImage
 from apps.manga_api.permissions import IsAdminUserOrReadOnly
 from apps.manga_api.serializers import MangaSerializer, MangaHomePageSerializer, MangaListSerializer, \
-    MangaArtistSerializer
-
-
-class MangaArtistViewSet(viewsets.ModelViewSet):
-    queryset = MangaArtist.objects.all()
-    serializer_class = MangaArtistSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    lookup_field = 'slug'
+    MangaArchiveSerializer, MangaImageViewSerializer
+from .tasks import parse_task_data
 
 
 class MangaViewSet(viewsets.ModelViewSet):
     queryset = Manga.objects.filter()
     serializer_class = MangaSerializer
-    search_fields = ['japan_name', 'english_name', 'artists__name', 'categories']
+    search_fields = ['japan_name', 'english_name']
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
     permission_classes = [IsAdminUserOrReadOnly, ]
     lookup_field = 'slug'
-    ordering_fields = ['rating']
-    filterset_fields = ()  # here
-
-
-class MangaFilterView(generics.ListAPIView):
-    serializer_class = MangaHomePageSerializer
-    filter_backends = [DjangoFilterBackend]
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = MangaHomePageSerializer(queryset, many=True)
-        return Response(serializer.data)
+    ordering_fields = ['rating', 'is_promoted']
+    # filterset_fields = ()  # here
 
 
 class MangaListView(generics.ListAPIView):
@@ -55,14 +41,14 @@ class MangaLastAddView(APIView):
     permission_classes = [AllowAny, ]
 
     def get(self, request):
-        last_add_volume = MangaVolume.objects.order_by('-create_time')[:10]
+        last_add_volume = MangaVolume.objects.order_by('create_time')
         manga_set = []
         for volume in last_add_volume:
             photo_url = request.build_absolute_uri(volume.manga.poster.url)
             response = {
                 'date': volume.create_time.strftime("%d-%m-%Y"),
                 'japan_name': volume.manga.japan_name,
-                'description': volume.manga.descriptions,
+                'descriptions': volume.manga.descriptions,
                 'poster': photo_url,
                 'volume': volume.volume,
                 'rating': volume.manga.rating,
@@ -70,7 +56,32 @@ class MangaLastAddView(APIView):
                 'slug': volume.manga.slug,
             }
             manga_set.append(response)
-        return Response(manga_set)
+        #  generator to make unique dict from response list
+        manga_set = list({v['slug']: v for v in manga_set}.values())
+        return Response({'results': manga_set})
+
+
+class MangaVolumeCreateView(APIView):
+    """
+    GET - Create new volume for manga
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        manga_slug = kwargs['slug']
+        volume_pk = kwargs['pk']
+
+        try:
+            manga = Manga.objects.get(slug=manga_slug)
+        except ObjectDoesNotExist:
+            return Response('error: manga with name ' + kwargs['slug'] + ' not found', status=status.HTTP_404_NOT_FOUND)
+
+        if manga:
+            try:
+                MangaVolume.objects.create(manga=manga, volume=volume_pk, created_by=request.user)
+                return Response('created', status=status.HTTP_201_CREATED)
+            except IntegrityError:
+                return Response('message: Manga volume already created!', status=status.HTTP_400_BAD_REQUEST)
 
 
 class MangaMainPageView(APIView):
@@ -85,6 +96,7 @@ class MangaMainPageView(APIView):
         manga_set = []
         for volume in volumes:
             response = {
+                'id': volume.pk,
                 'date': volume.create_time.strftime("%d-%m-%Y"),
                 'volume': volume.volume,
                 'created_by': volume.created_by.nickname,
@@ -97,4 +109,32 @@ class MangaMainPageView(APIView):
 class MangaPromotedView(generics.ListAPIView):
     serializer_class = MangaHomePageSerializer
     permission_classes = [AllowAny, ]
-    queryset = Manga.objects.filter(is_promoted=True)[:10]
+    queryset = Manga.objects.filter(is_promoted=True)
+
+
+class MangaArchiveCreateView(generics.CreateAPIView):
+    queryset = MangaArchive.objects.all()
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = MangaArchiveSerializer
+
+    def perform_create(self, serializer):
+        try:
+            manga_volume = MangaVolume.objects.get(manga=self.request.data['manga'], volume=self.request.data['volume'])
+            raise ValidationError('Manga volume already exist!')
+        except ObjectDoesNotExist:
+            instance = serializer.save()
+            manga_volume = MangaVolume.objects.create(
+                created_by=self.request.user,
+                volume=instance.volume,
+                manga=instance.manga
+            ).pk
+            parse_task_data.delay(archive_id=instance.id, manga_volume=manga_volume)
+
+
+class MangaImageListView(generics.ListAPIView):
+    serializer_class = MangaImageViewSerializer
+    permission_classes = [AllowAny, ]
+
+    def get_queryset(self):
+        volume_pk = self.kwargs['pk']
+        return MangaImage.objects.filter(volume=volume_pk).order_by('sort_index')

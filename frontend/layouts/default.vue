@@ -1,92 +1,186 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      class="hidden-lg-and-up"
-      temporary
-      app
-    >
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in loginItems"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"/>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-app-bar
-      app
-      hide-on-scroll
-      dense
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-lg-and-up"/>
-      <v-toolbar-title v-text="title"/>
-      <v-spacer/>
-      <v-toolbar-items class="hidden-md-and-down">
-        <v-btn v-for="(item, i) in loginItems"
-               :key="i"
-               :to="item.to"
-               router
-               text
-               exact
-        >
-          <v-icon left>{{item.icon}}</v-icon>
-
-          {{item.title}}
-        </v-btn>
-      </v-toolbar-items>
-      <v-spacer></v-spacer>
-
-      <v-toolbar-items class="hidden-md-and-down" v-if="avatar">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn text v-on="on">
-              <v-list-item>
-                <v-list-item-avatar size="36">
-                  <v-img :src="avatar"/>
-                </v-list-item-avatar>
-                <v-list-item-subtitle>{{nickname}}</v-list-item-subtitle>
-                <v-list-item-action>
-                  <v-icon>mdi-menu-down</v-icon>
-                </v-list-item-action>
-              </v-list-item>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item
-              v-for="(item, i) in profileItems"
-              :key="i"
-              :to="item.to"
-
+    <client-only>>
+      <v-navigation-drawer
+        v-model="drawer"
+        class="hidden-lg-and-up"
+        temporary
+        app
+      >
+        <v-list>
+          <div class="ma-2 mb-0 pb-0">
+            <v-autocomplete
+              v-model="model"
+              :items="searchResults"
+              :loading="isLoading"
+              :search-input.sync="search"
+              color="primary"
+              item-text="text"
+              item-value="value"
+              append-icon="mdi-magnify"
+              label="Search"
+              return-object
+              hide-selected
+              clearable
+              outlined
+              dense
+              hide-no-data
             >
-              <v-icon left>{{item.icon}}</v-icon>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-            <v-divider/>
-            <v-list-item>
-              <v-icon left color="error">mdi-exit-to-app</v-icon>
+            </v-autocomplete>
+          </div>
+          <v-list-item
+            :to="'/profile/'"
+            v-if="avatar"
+          >
+            <v-list-item-avatar size="30">
+              <v-img :src="avatar"/>
+            </v-list-item-avatar>
+            <v-list-item-title>{{nickname}}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+        <v-list dense class="pt-0">
+          <v-list-item
+            v-for="(item, i) in loginItems"
+            :key="i"
+            :to="item.to"
+            :color="item.color ? item.color : ''"
+            router
+            exact
+          >
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.title"/>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            v-if="$store.state.user.isAuth"
+            router
+            exact
+            @click="logout"
+          >
+            <v-list-item-action>
+              <v-icon color="error">mdi-exit-to-app</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
               <v-list-item-title color="error">Exit</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-toolbar-items>
-    </v-app-bar>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            :to="'/login/'"
+            v-if="!$store.state.user.isAuth"
+            router
+            exact
+          >
+            <v-list-item-action>
+              <v-icon color="primary">mdi-exit-to-app</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title color="primary">Login</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </client-only>
+    <client-only>
+      <v-app-bar
+        app
+        hide-on-scroll
+      >
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-lg-and-up"/>
+        <v-toolbar-title v-text="title"/>
+        <v-spacer/>
+        <v-toolbar-items class="hidden-md-and-down">
+          <v-btn v-for="(item, i) in loginItems"
+                 :key="i"
+                 :to="item.to"
+                 :color="item.color ? item.color : ''"
+                 class="mx-1"
+                 router
+                 text
+                 exact
+          >
+            <v-icon left>{{item.icon}}</v-icon>
+            {{item.title}}
+          </v-btn>
+        </v-toolbar-items>
+        <v-toolbar-items class="hidden-md-and-down align-end mx-1 mt-7">
+          <v-autocomplete
+            v-model="model"
+            :items="searchResults"
+            :loading="isLoading"
+            :search-input.sync="search"
+            color="primary"
+            item-text="text"
+            item-value="value"
+            append-icon="mdi-magnify"
+            label="Search"
+            return-object
+            hide-selected
+            clearable
+            outlined
+            dense
+            hide-no-data
+          >
+            <template v-slot:{item}>
+              <v-btn color="primary">
+                {{item}}
+              </v-btn>
+              <v-icon right>mdi-magnify</v-icon>
+            </template>
+          </v-autocomplete>
+        </v-toolbar-items>
+        <v-toolbar-items>
+          <v-btn
+            :to="'/login/'"
+            v-if="!$store.state.user.isAuth"
+            color="primary"
+            text
+          >
+            login
+          </v-btn>
+        </v-toolbar-items>
+        <v-toolbar-items class="hidden-md-and-down" v-if="$store.state.user.isAuth">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on }">
+              <v-btn text v-on="on">
+                <v-list-item>
+                  <v-list-item-avatar size="36">
+                    <v-img :src="avatar"/>
+                  </v-list-item-avatar>
+                  <v-list-item-subtitle>{{nickname}}</v-list-item-subtitle>
+                  <v-list-item-action>
+                    <v-icon>mdi-menu-down</v-icon>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, i) in profileItems"
+                :key="i"
+                :to="item.to"
 
-    <v-content>
-      <v-container>
-        <nuxt/>
-      </v-container>
-    </v-content>
+              >
+                <v-icon left>{{item.icon}}</v-icon>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+              <v-divider/>
+              <v-list-item @click="logout" v-if="$store.state.user.isAuth">
+                <v-icon left color="error">mdi-exit-to-app</v-icon>
+                <v-list-item-title color="error">Exit</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-toolbar-items>
+      </v-app-bar>
+      </client-only>
+        <v-content>
+          <v-container>
+            <nuxt/>
+          </v-container>
+        </v-content>
   </v-app>
 </template>
 
@@ -96,12 +190,18 @@
   export default {
     data() {
       return {
+        isLoading: false,
+        model: null,
+        search: null,
+        results: null,
+        searchItems: [],
+
         drawer: false,
         loginItems: [
           {
             icon: 'mdi-home',
             title: 'Home',
-            to: '/'
+            to: '/',
           },
           {
             icon: 'mdi-chart-bubble',
@@ -109,22 +209,61 @@
             to: '/manga/'
           },
           {
-            icon: 'mdi-card-search-outline',
-            title: 'Search',
-            to: '/search/'
+            icon: 'mdi-book-plus',
+            title: 'Add manga',
+            to: '/add/',
+            color: 'success'
           }
         ],
         profileItems: [
-          {title: 'Profile', to: '/profile/', icon: 'mdi-account'},
-          {title: 'Bookmarks', to: '/bookmarks/', icon: 'mdi-bookmark'},
+          {title: 'My profile', to: '/profile/', icon: 'mdi-account'},
         ],
         title: 'Manga-exchange.ru'
       }
     },
-    methods: {},
-    computed: mapGetters({
-      avatar: 'user/getUserAvatar',
-      nickname: 'user/getUserNickName',
-    }),
+    methods: {
+      logout() {
+        this.$store.dispatch('user/LOGOUT')
+        this.$router.push('/')
+      }
+    },
+    watch: {
+      async search(val) {
+        // Items have already been loaded
+        if (!this.search) return;
+
+        // Items have already been requested
+        if (this.isLoading) return;
+        // Lazily load input items
+
+        if (this.search.length > 3) {
+          this.isLoading = true;
+          const response = await this.$axios.$get('/api/v1/manga/?search=' + this.search);
+          let results = [];
+          if (response.count) {
+            for (let item in response.results) {
+              results.push({'text': response.results[item].english_name, 'value': response.results[item].slug})
+            }
+            this.$store.commit('search/setSearchResult', results)
+          }
+          this.isLoading = false;
+          return val;
+        }
+      },
+      model() {
+        if (this.model) {
+          this.$router.push('/manga/' + this.model.value + '/');
+          this.$store.commit('search/clearSearchResult');
+          this.model = null;
+        }
+      }
+    },
+    computed: {
+      ...mapGetters({
+        avatar: 'user/getUserAvatar',
+        nickname: 'user/getUserNickName',
+        searchResults: 'search/getSearchResult',
+      }),
+    },
   }
 </script>

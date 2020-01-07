@@ -2,6 +2,9 @@ export default {
   getUserToken(state) {
     return state.token
   },
+  getUserId(state){
+    return state.id
+  },
   getUserAvatar(state){
     return state.avatar
   },
@@ -13,5 +16,8 @@ export default {
   },
   getUserFullName(state){
     return state.fullName
+  },
+  getIsFirstTime(state){
+    return state.isFirstTime
   }
 };

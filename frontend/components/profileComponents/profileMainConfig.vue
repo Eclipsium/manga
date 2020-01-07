@@ -12,12 +12,12 @@
     </v-toolbar>
     <v-card-text>
       <v-row class="text-center">
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="6">
           <v-form v-model="nickNameValid">
             <v-text-field
               :disabled="!changeNickName"
               counter="20"
-              label="Ник"
+              label="Nickname"
               v-model="nickNameForChange"
               :value="nickname"
               :rules="nameRules"
@@ -41,36 +41,7 @@
             </v-btn>
           </v-form>
         </v-col>
-
-        <v-col cols="12" md="4">
-          <v-form v-model="fullNameValid">
-            <v-text-field
-              :disabled="!changeFullName"
-              label="Полное имя"
-              counter="20"
-              :rules="nameRules"
-              v-model="fullNameForChange"
-              prepend-icon="mdi-account-circle"
-            >
-            </v-text-field>
-            <v-btn
-              color="primary darken-1"
-              v-if="!changeFullName"
-              @click="changeFullName=!changeFullName"
-            >
-              Change full name
-            </v-btn>
-            <v-btn
-              color="success"
-              :disabled="!fullNameValid"
-              v-if="changeFullName"
-              @click="submitNickName()"
-            >
-              Save
-            </v-btn>
-          </v-form>
-        </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="6">
           <v-form
             v-model="emailValid"
           >
@@ -85,7 +56,7 @@
             <v-btn
               color="primary darken-1"
               v-if="!changeEmail"
-              @click="changeEmail=!changeEmail"
+              disabled
             >
               Change email
             </v-btn>
@@ -101,15 +72,13 @@
         </v-col>
       </v-row>
       <v-snackbar
-        v-model="hasSaved"
-        :timeout="2000"
-        absolute
-        bottom
-        left
+        v-if="isAlert"
+        v-model="snackbar"
+        :color="isAlert.type"
+        :timeout="0"
       >
-        Your profile has been updated
+        {{ isAlert.message }}
       </v-snackbar>
-
     </v-card-text>
   </v-card>
 </template>
@@ -123,11 +92,13 @@
       this.$axios.setToken('Token ' + this.token);
       this.nickNameForChange = this.nickname;
       this.emailForChange = this.email;
-      this.fullNameForChange = this.fullName
+      this.fullNameForChange = this.fullName;
+      this.$store.commit('status/cleanAlert')
     },
     data() {
       return {
         hasSaved: false,
+        snackbar: true,
         isEditing: null,
         changeNickName: false,
         nickNameForChange: null,
@@ -149,6 +120,10 @@
           v => !!v || 'Введите почту!',
           v => /.+@.+\..+/.test(v) || 'Email is invalid!'
         ],
+        imageRules: [
+          v => !!v || 'Is required',
+          v => !v || v.size < 2000000 || 'Avatars should less than 2 MB! !',
+        ],
       }
     },
     computed: {
@@ -158,41 +133,47 @@
       ...mapGetters({
         nickname: 'user/getUserNickName',
         email: 'user/getUserEmail',
-        fullName: 'user/getUserFullName',
         token: 'user/getUserToken',
+        avatar: 'user/getUserAvatar',
+        id: 'user/getUserId',
+        onAction: 'status/getProcess',
+        isAlert: 'status/getAlert'
       }),
     },
     methods: {
       async submitNickName() {
-        try{
-          const data = await this.$axios.$put('http://localhost:8000/api/v1/profile/' + this.nickname + '/',
+        this.$store.commit('status/cleanAlert');
+        if(this.nickNameForChange === this.nickname){
+          this.changeNickName = false;
+          return
+        }
+        try {
+          const data = await this.$axios.$put('http://localhost:8000/api/v1/auth/users/' + this.id + '/',
             {
               nickname: this.nickNameForChange,
               email: this.emailForChange,
-              full_name: this.fullNameForChange,
             });
           this.$store.commit('user/setUserNickName', this.nickNameForChange);
-          this.$store.commit('user/setUserEmail', this.emailForChange);
-          this.$store.commit('user/setUserFullName', this.fullNameForChange);
-        }catch (e) {
-          console.log(e)
+          this.$store.commit('status/setAlert', {
+            'message': 'Nickname change success',
+            'type': 'success'
+          })
+        } catch (e) {
+          this.$store.commit('status/setAlert', {
+            'message' :e.response.data.nickname[0],
+            'type': 'error',
+          })
+          this.nickNameForChange = this.nickname
         }
         this.changeNickName = false;
-        this.changeFullName = false;
         this.changeEmail = false;
+        setTimeout( ()=> (
+          this.$store.commit('status/cleanAlert')
+        ),2000)
       }
     },
   }
 </script>
-setUserNickName(state, nickname){
-state.nickname = nickname
-},
-setUserEmail(state, email){
-state.email = email
-},
-setUserFullName(state, fullName){
-state.fullName = fullName
-},
 <style scoped>
 
 </style>

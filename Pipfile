@@ -17,6 +17,10 @@ django-better-admin-arrayfield = "*"
 django-filter = "*"
 drf-yasg = "*"
 pytils = "*"
+celery = "*"
+pyunpack = "*"
+patool = "*"
+rarfile = "*"
 
 [requires]
 python_version = "3.7"

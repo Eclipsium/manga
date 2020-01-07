@@ -1,5 +1,14 @@
 export default {
-  getCategories(state) {
-    return state.CATEGORIES
+  getSlugOfAddManga(state){
+    return state.slugOfAddManga
+  },
+  getMangaMessage(state){
+    return state.mangaMessage
+  },
+  getMangaCatalog(state){
+    return state.mangaCatalog
+  },
+  getLastManga(state){
+    return state.lastManga
   }
 };

@@ -7,7 +7,7 @@ export default {
     state.avatar = payload.avatar;
     state.isAdmin = payload.is_staff;
     state.nickname = payload.nickname;
-    state.fullName = payload.full_name;
+    state.id = payload.id
   },
   setUserNickName(state, nickname){
     state.nickname = nickname
@@ -18,6 +18,9 @@ export default {
   setUserFullName(state, fullName){
     state.fullName = fullName
   },
+  setUserAvatar(state, avatar){
+    state.avatar = avatar
+  },
   setToken(state, token) {
     state.token = token
   },
@@ -25,7 +28,12 @@ export default {
     state.isAdmin = false;
     state.isAuth = false;
     state.email = null;
-    state.photo = null;
+    state.avatar = null;
     state.token = null;
+    state.id = null;
+    state.nickname = null;
   },
+  seeFirstMessage(state){
+    state.isFirstTime = false
+  }
 }

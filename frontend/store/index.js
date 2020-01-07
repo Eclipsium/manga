@@ -1,18 +1,8 @@
-const cookieparser = process.server ? require('cookieparser') : undefined;
-
 export default {
   actions: {
-    async nuxtServerInit ({ commit }, { req }) {
-      let token = null;
-      if (req.headers.cookie) {
-        const parsed = cookieparser.parse(req.headers.cookie);
-        try {
-          token = parsed.token;
-        } catch (e) {
-          console.log(e)
-        }
-      }
-      commit('user/setToken', token);
+    async nuxtServerInit ({ state }, { req }) {
+
+      let token = state.user.token;
       if (token) {
         this.$axios.setToken('Token ' + token);
         let userData = null;

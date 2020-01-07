@@ -1,5 +1,4 @@
 <template>
-
   <v-app>
     <v-container
       class="fill-height"
@@ -19,8 +18,10 @@
       >
         <v-col
           cols="12"
-          sm="6"
-          md="3"
+          lg="4"
+          md="6"
+          sm="8"
+          xs="12"
         >
           <v-card class="elevation-12">
             <v-toolbar
@@ -28,14 +29,22 @@
               dark
               flat
             >
-              <v-toolbar-title>Авторизация на сайте</v-toolbar-title>
+              <v-toolbar-title>
+                Login
+              </v-toolbar-title>
+              <v-spacer/>
+              <v-btn icon :to="'/'">
+                <v-icon>
+                  mdi-home
+                </v-icon>
+              </v-btn>
             </v-toolbar>
             <v-card-text>
               <v-form
                 ref="form"
                 v-model="valid">
                 <v-text-field
-                  label="Почта"
+                  label="Email"
                   v-model="email"
                   :rules="emailRules"
                   prepend-icon="mdi-email"
@@ -46,7 +55,7 @@
                 <v-text-field
                   v-model="password"
                   :rules="passwordRules"
-                  label="Пароль"
+                  label="Password"
                   prepend-icon="mdi-lock"
                   type="password"
                   required
@@ -54,9 +63,9 @@
               </v-form>
             </v-card-text>
             <v-card-actions class="mx-4">
-              <v-btn color="primary">
+              <v-btn :to="'/reg/'" color="primary">
                 <v-icon left>mdi-account-plus</v-icon>
-                Нет аккаунта?
+                Create account
               </v-btn>
               <v-spacer/>
               <v-btn
@@ -66,7 +75,7 @@
                 color="success"
               >
                 <v-icon left>mdi-login</v-icon>
-                Войти
+                Login
               </v-btn>
             </v-card-actions>
             <v-container fluid>
@@ -80,7 +89,7 @@
                   align="center"
                 >
 
-                  <p>Войти через социальные сети</p>
+                  <p>Social login</p>
 
                   <v-btn-toggle color="primary">
                     <v-btn>
@@ -102,12 +111,12 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters } from 'vuex'
-  const Cookie = process.client ? require('js-cookie') : undefined
+  import {mapMutations, mapGetters} from 'vuex'
 
   export default {
     name: "login",
     layout: 'blank',
+    middleware: 'notAuth',
     data: () => ({
       snackbar: true,
       text: 'Hello, I\'m a snackbar',
@@ -117,7 +126,7 @@
         v => !!v || 'Введите пароль',
         v => (v && v.length >= 6) || 'Пароль должен быть больше 6 символов!'
       ],
-      email: 'abiogenesis70ru@gmail.com',
+      email: '',
       emailRules: [
         v => !!v || 'Введите почту!',
         v => /.+@.+\..+/.test(v) || 'Почта введена не правильно!'
@@ -136,38 +145,38 @@
           params.append('email', this.email);
           params.append('password', this.password);
 
+          this.$axios.setHeader('Authorization', null);
+
           this.$axios.post('/api/v1/auth/token/login/', params)
+            .catch(function (error) {
+              store.commit('status/setAlert', {
+                message: error.response.data.non_field_errors[0],
+                type: 'error'
+              })
+            })
             .then(function (response) {
-              let token = response.data.data.id;
+              let token = response.data.auth_token;
               store.commit('user/setToken', token);
-              Cookie.set('token', token);
-              // axios.setToken('Token: ' + response.data.data.id);
+              store.dispatch('user/GET_USER_DATA', token);
               store.commit('user/setAuth', true);
               store.commit('status/setAlert', {
-                message: 'Вы успешно вошли!',
+                message: 'Success!',
                 type: 'success'
               });
               setTimeout(() => router.push('/'), 500)
-            })
-            .catch(function (error) {
-              if (error.request) {
-                store.commit('status/setAlert', {
-                  message: error.response.data.errors[0].detail,
-                  type: 'error'
-                })
-              }
             });
+
           store.commit('status/onProcess', false)
         }
       },
-      to_req() {
-        this.$router.push({path: '/reg/'})
-      }
     },
     computed: mapGetters({
       onAction: 'status/getProcess',
       isAlert: 'status/getAlert'
     }),
+    created() {
+      this.$store.commit('status/cleanAlert');
+    },
     props: {
       source: String
     }

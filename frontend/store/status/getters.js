@@ -4,5 +4,5 @@ export default {
   },
   getProcess(state) {
     return state.inProcess
-  }
+  },
 };

@@ -3,20 +3,16 @@ from rest_framework import serializers
 from apps.manga_api.models import *
 
 
-class MangaArtistSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MangaArtist
-        fields = ['name', 'slug']
-
-
 class MangaSerializer(serializers.ModelSerializer):
-    artists = MangaArtistSerializer(many=True)
+    create_by_user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault(),
+    )
 
     class Meta:
         model = Manga
         fields = [
-            'japan_name', 'english_name', 'descriptions', 'slug', 'categories', 'poster', 'rating',
-            'is_promoted', 'artists'
+            'id', 'japan_name', 'english_name', 'descriptions', 'slug', 'poster', 'rating',
+            'is_promoted', 'artists', 'create_by_user'
         ]
 
 
@@ -34,9 +30,29 @@ class MangaHomePageSerializer(serializers.ModelSerializer):
 
 class MangaListSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для поиска манги
+    Serializer for search manga
     """
 
     class Meta:
         model = Manga
         fields = ('english_name',)
+
+
+class MangaArchiveSerializer(serializers.ModelSerializer):
+    """
+    Serializer for archives
+    """
+
+    class Meta:
+        model = MangaArchive
+        fields = '__all__'
+
+
+class MangaImageViewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for manga image view page
+    """
+
+    class Meta:
+        model = MangaImage
+        fields = ('sort_index', 'image')
