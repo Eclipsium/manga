@@ -17,7 +17,7 @@ sudo apt-get install libpq-dev
 sudo -u postgres psql postgres
 \password postgres
 
-create user manga with password 'manga_password11'
+create user manga with password 'manga_password11';
 alter role manga set client_encoding to 'utf8';
 alter role manga set default_transaction_isolation to 'read committed';
 alter role manga set timezone to 'UTC+3';
