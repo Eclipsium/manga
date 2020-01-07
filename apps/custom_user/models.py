@@ -74,14 +74,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'
 
 
-@receiver(pre_save, sender=User)
-def delete_file_on_change_extension(sender, instance, **kwargs):
-    if instance.pk:
-        try:
-            old_avatar = User.objects.get(pk=instance.pk).avatar
-        except User.DoesNotExist:
-            return
-        else:
-            new_avatar = instance.avatar
-            if old_avatar and old_avatar.url != new_avatar.url:
-                old_avatar.delete(save=False)
+# @receiver(pre_save, sender=User)
+# def delete_file_on_change_extension(sender, instance, **kwargs):
+#     if instance.pk:
+#         try:
+#             old_avatar = User.objects.get(pk=instance.pk).avatar
+#         except User.DoesNotExist:
+#             return
+#         else:
+#             new_avatar = instance.avatar
+#             if old_avatar and old_avatar.url != new_avatar.url:
+#                 old_avatar.delete(save=False)

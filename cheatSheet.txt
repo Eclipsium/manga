@@ -7,3 +7,30 @@ rabbitmqctl set_permissions -p mangahost manga ".*" ".*" ".
 celery worker -A apps.manga_api --loglevel=info --concurrency=1
 
 
+sudo apt-get install postgresql
+sudo apt-get install python-psycopg2
+sudo apt-get install libpq-dev
+
+
+###Постгресс инициализация###
+
+sudo -u postgres psql postgres
+\password postgres
+
+create user manga with password 'manga_password11'
+alter role manga set client_encoding to 'utf8';
+alter role manga set default_transaction_isolation to 'read committed';
+alter role manga set timezone to 'UTC+3';
+create database manga_db owner manga;
+\q
+
+
+###Настройка сервера###
+adduser manga
+sudo apt-get install nginx
+cd /etc/nginx/sites-available
+sudo vim default
+sudo touch .env
+sudo npm install pm2 -g
+pm2 start npm -- start
+
