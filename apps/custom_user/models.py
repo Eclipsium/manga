@@ -52,13 +52,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserAccountManager()
 
     email = models.EmailField('email', unique=True, blank=False, null=False)
-    full_name = models.CharField('Полное имя', blank=True, null=True, max_length=400)
-    nickname = models.CharField('Ник', blank=True, null=True, max_length=100, unique=True)
-    is_staff = models.BooleanField('Админинстратор', default=False)
-    is_verified = models.BooleanField('Верифицированый', default=False)  # Add the `is_verified` flag
-    verification_uuid = models.UUIDField('Уникальный ключ', default=uuid.uuid4)
-    is_active = models.BooleanField('Активный', default=True)
-    avatar = models.ImageField('Аватарка', upload_to=get_avatar_path, default=get_default_avatar)
+    nickname = models.CharField('Nickname', blank=True, null=True, max_length=100, unique=True)
+    is_staff = models.BooleanField('Admin', default=False)
+    is_verified = models.BooleanField('Verify', default=False)  # Add the `is_verified` flag
+    verification_uuid = models.UUIDField('UUID', default=uuid.uuid4)
+    is_active = models.BooleanField('Is active', default=True)
+    avatar = models.ImageField('Avatar', upload_to=get_avatar_path, default=get_default_avatar)
 
     def get_short_name(self):
         return self.nickname
@@ -70,8 +69,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.nickname
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
 
 
 # @receiver(pre_save, sender=User)
