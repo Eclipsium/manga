@@ -21,6 +21,7 @@ celery = "*"
 pyunpack = "*"
 patool = "*"
 rarfile = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
