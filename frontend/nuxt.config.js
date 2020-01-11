@@ -38,7 +38,7 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    ['@nuxtjs/axios', {host: '92.63.105.56', port: 8000}],
+    ['@nuxtjs/axios', {host: '92.63.105.56', port: 80}],
     ['nuxt-vuex-localstorage', {
       localStorage: ['user'],  //  If not entered, “localStorage” is the default value
     }],
