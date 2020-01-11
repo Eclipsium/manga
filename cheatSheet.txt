@@ -6,6 +6,8 @@ rabbitmqctl set_permissions -p mangahost manga ".*" ".*" ".
 
 celery worker -A apps.manga_api --loglevel=info --concurrency=1
 
+sudo systemctl restart redis.service
+
 
 sudo apt-get install postgresql
 sudo apt-get install python-psycopg2
