@@ -41,7 +41,6 @@ def parse_data_from_archive(archive_id, manga_volume):
 
     opened_file = []
     extract_image = get_images_from_path(temp_path)
-    logger.info('Images: ' + str(extract_image))
 
     if len(extract_image) < 1:
         return
