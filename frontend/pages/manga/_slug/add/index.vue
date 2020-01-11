@@ -82,7 +82,7 @@
 
   export default {
     name: "index",
-    middleware: 'notAuth',
+    middleware: 'auth',
     head() {
       return {
         title: 'Add volume for ' + this.mangaData.english_name,
