@@ -17,6 +17,7 @@ def get_images_from_path(temp_path):
     files = [f for f in glob.glob("*/*.jpg", recursive=True)]
     if not files:
         files = [f for f in glob.glob("*/*.png", recursive=True)]
+    files = [file.split('/')[-1] for file in files]
     return files
 
 
