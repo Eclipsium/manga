@@ -4,7 +4,7 @@ export default {
   mode: 'universal',
   server: {
     port: 3000, // default: 3000
-    host: '127.0.0.1' //host: '92.63.105.56'
+    host: '92.63.105.56' 
   },
   /*
   ** Headers of the page

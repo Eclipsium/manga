@@ -336,7 +336,7 @@
       deleteManga(item) {
         this.$axios.$delete('api/v1/volume/' + item.id + '/delete/')
         .then(()=>{
-          this.mangaData = this.mangaData.filter(function( obj ) {
+          this.mangaVolumes = this.mangaVolumes.filter(function( obj ) {
             return obj.id !== item.id;
           })
         }).catch((e)=>{
