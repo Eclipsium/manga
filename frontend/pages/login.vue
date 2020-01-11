@@ -79,31 +79,31 @@
                 Login
               </v-btn>
             </v-card-actions>
-            <v-container fluid>
-              <v-divider/>
-              <v-row>
+<!--            <v-container fluid>-->
+<!--              <v-divider/>-->
+<!--              <v-row>-->
 
-                <v-col
-                  cols="12"
-                  sm="12"
-                  class="py-2"
-                  align="center"
-                >
+<!--                <v-col-->
+<!--                  cols="12"-->
+<!--                  sm="12"-->
+<!--                  class="py-2"-->
+<!--                  align="center"-->
+<!--                >-->
 
-                  <p>Social login</p>
+<!--                  <p>Social login</p>-->
 
-                  <v-btn-toggle color="primary">
-                    <v-btn>
-                      <v-icon>mdi-vk</v-icon>
-                    </v-btn>
+<!--                  <v-btn-toggle color="primary">-->
+<!--                    <v-btn>-->
+<!--                      <v-icon>mdi-vk</v-icon>-->
+<!--                    </v-btn>-->
 
-                    <v-btn>
-                      <v-icon>mdi-facebook</v-icon>
-                    </v-btn>
-                  </v-btn-toggle>
-                </v-col>
-              </v-row>
-            </v-container>
+<!--                    <v-btn>-->
+<!--                      <v-icon>mdi-facebook</v-icon>-->
+<!--                    </v-btn>-->
+<!--                  </v-btn-toggle>-->
+<!--                </v-col>-->
+<!--              </v-row>-->
+<!--            </v-container>-->
           </v-card>
         </v-col>
       </v-row>

@@ -103,8 +103,9 @@
         </v-data-table>
         <div class='text-center mt-4'>
           <v-btn
+            v-if="$store.state.user.isAuth"
             color="primary"
-            @click="$router.push('add/')"
+            :to="'upload/'"
           >
             Add manga volume
           </v-btn>
