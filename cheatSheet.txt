@@ -10,6 +10,11 @@ celery worker -A apps.manga_api --loglevel=info --concurrency=1
 sudo apt-get install postgresql
 sudo apt-get install python-psycopg2
 sudo apt-get install libpq-dev
+sudo apt-get install rabbitmq-server
+
+sudo rabbitmqctl add_user manga mangapassword
+sudo rabbitmqctl add_vhost mangahost
+sudo rabbitmqctl set_permissions -p mangahost manga ".*" ".*" ".*"
 
 
 ###Постгресс инициализация###
