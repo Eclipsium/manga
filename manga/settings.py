@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '61dm6v074@bh5*svkolr9d$6&_c-q$11=wgo9-d1^)c18&6!=6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -129,11 +129,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AUTH_USER_MODEL = 'custom_user.User'
 SITE = 1
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'flamp.parser@gmail.com'
-EMAIL_HOST_PASSWORD = '7cwPcA2tVeV3'
-EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'flamp.parser@gmail.com'
+# EMAIL_HOST_PASSWORD = '7cwPcA2tVeV3'
+# EMAIL_PORT = 587
 
 TEMPLATES = [
     {
