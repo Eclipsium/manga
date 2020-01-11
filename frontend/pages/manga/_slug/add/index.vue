@@ -82,7 +82,7 @@
 
   export default {
     name: "index",
-    middleware: 'auth',
+    middleware: 'noAuth',
     head() {
       return {
         title: 'Add volume for ' + this.mangaData.english_name,
@@ -162,11 +162,8 @@
           })
       }
     },
-    mounted () {
+    mounted() {
       this.$store.commit('status/cleanAlert');
-      if(this.$store.state.user.isAuth){
-        this.$router.push('/')
-      }
     },
     computed: {
       ...mapGetters({
