@@ -154,10 +154,11 @@
             'type': 'error',
             'message': res.response.data[0]
           };
+          console.log(res);
           store.commit('status/setAlert', payload);
           this.archive = null
         })
-          .finally(function () {
+          .finally(() => {
             store.commit('status/onProcess', false);
           })
       }
