@@ -13,15 +13,10 @@ logger = get_task_logger(__name__)
 
 
 def get_images_from_path(temp_path):
-    os.chdir(temp_path)
-    logger.info(os.getcwd())
-    parser_images = []
-
-    files = [f for f in glob.glob("**/*.jpg", recursive=True)]
+    files = [f for f in glob.glob(os.path.join(temp_path, "**/*.jpg"), recursive=True)]
     if not files:
-        files = [f for f in glob.glob("**/*.png", recursive=True)]
+        files = [f for f in glob.glob(os.path.join(temp_path, "**/*.png"), recursive=True)]
 
-    logger.info(files)
     files.sort()
     return files
 
