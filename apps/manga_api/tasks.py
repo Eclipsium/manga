@@ -4,7 +4,7 @@ import shutil
 
 from celery.utils.log import get_task_logger
 from django.core.files import File
-from pyunpack import Archive
+from pyunpack import Archive, PatoolError
 
 from apps.manga_api.celery import app as celery_app
 from apps.manga_api.models import MangaArchive, MangaImage, MangaVolume
@@ -31,7 +31,14 @@ def parse_data_from_archive(archive_id, manga_volume):
         os.makedirs(temp_path)
         logger.info('temp path created')
 
-    Archive(archive_path).extractall(temp_path)
+    try:
+        Archive(archive_path).extractall(temp_path)
+    except PatoolError as e:
+        shutil.rmtree(temp_path)
+        instance.delete()
+        logger.error(e)
+        return
+
     opened_file = []
     extract_image = get_images_from_path(temp_path)
     logger.info('Images: ' + str(extract_image))
