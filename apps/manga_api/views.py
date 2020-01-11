@@ -65,7 +65,7 @@ class MangaLastAddView(APIView):
 
 
 class MangaVolumeDeleteView(generics.DestroyAPIView):
-    permission_classes = IsAdminUserOrReadOnly
+    permission_classes = [IsAdminUserOrReadOnly,]
     serializer_class = MangaVolumeSerializer
 
     def destroy(self, request, *args, **kwargs):

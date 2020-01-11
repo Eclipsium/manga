@@ -334,8 +334,14 @@
         this.readMangaDialog = true
       },
       deleteManga(item) {
-        this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
-        this.readMangaDialog = true
+        this.$axios.$delete('api/v1/volume/' + item.id + '/delete/')
+        .then(()=>{
+          this.mangaData = this.mangaData.filter(function( obj ) {
+            return obj.id !== item.id;
+          })
+        }).catch((e)=>{
+          console.log(e)
+        })
       },
       toArtistPage(artist) {
         this.$router.push('/artist/' + artist + '/')
