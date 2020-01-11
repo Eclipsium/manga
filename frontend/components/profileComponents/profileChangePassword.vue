@@ -16,7 +16,6 @@
         disabled
         class="mr-2"
         color="warning"
-        dark
         @click.stop="changePasswordDialog = true"
       >
         Change password
@@ -88,7 +87,6 @@
         disabled
         class="ml-2"
         color="error"
-        dark
         @click.stop="deleteProfileDialog = true"
       >
         Delete account
