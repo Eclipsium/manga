@@ -22,10 +22,8 @@ def get_images_from_path(temp_path):
         files = [f for f in glob.glob("**/*.png", recursive=True)]
 
     logger.info(files)
-
-    for file in files:
-        parser_images.append(file.split('/')[-1])
-    return parser_images
+    files.sort()
+    return files
 
 
 def parse_data_from_archive(archive_id, manga_volume):
