@@ -17,9 +17,12 @@ def get_images_from_path(temp_path):
     logger.info(os.getcwd())
     parser_images = []
 
-    files = [f for f in glob.glob("*/*.jpg", recursive=True)]
+    files = [f for f in glob.glob("**/*.jpg", recursive=True)]
     if not files:
-        files = [f for f in glob.glob("*/*.png", recursive=True)]
+        files = [f for f in glob.glob("**/*.png", recursive=True)]
+
+    logger.info(files)
+
     for file in files:
         parser_images.append(file.split('/')[-1])
     return parser_images
@@ -31,14 +34,13 @@ def parse_data_from_archive(archive_id, manga_volume):
     volume = MangaVolume.objects.get(id=manga_volume)
     archive_path = instance.archive.path
     temp_path = os.path.join('/media/temp', str(instance.id) + '/')
-    logger.info(temp_path)
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
-        logger.info('temp path created')
 
     try:
         Archive(archive_path).extractall(temp_path)
+        logger.info('Archive extract to ' + temp_path)
     except PatoolError as e:
         shutil.rmtree(temp_path)
         instance.delete()
@@ -48,7 +50,6 @@ def parse_data_from_archive(archive_id, manga_volume):
     opened_file = []
     extract_image = get_images_from_path(temp_path)
     logger.info('Images: ' + str(extract_image))
-    logger.info('Archive path' + archive_path)
 
     if len(extract_image) < 1:
         volume.delete()
