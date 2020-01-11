@@ -42,3 +42,5 @@ sudo touch .env
 sudo npm install pm2 -g
 pm2 start npm -- start
 
+gunicorn --daemon -b 92.63.105.56:8000 manga.wsgi:application
+
