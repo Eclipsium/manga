@@ -25,6 +25,7 @@ def parse_data_from_archive(archive_id, manga_volume):
     volume = MangaVolume.objects.get(id=manga_volume)
     archive_path = instance.archive.path
     temp_path = os.path.join('/media/temp', str(instance.id) + '/')
+    logger.info(temp_path)
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
@@ -32,6 +33,8 @@ def parse_data_from_archive(archive_id, manga_volume):
     Archive(archive_path).extractall(temp_path)
     opened_file = []
     extract_image = get_images_from_path(temp_path)
+    logger.info(extract_image)
+
     if len(extract_image) < 1:
         volume.delete()
     else:
