@@ -32,7 +32,6 @@ def parse_data_from_archive(archive_id, manga_volume):
     Archive(archive_path).extractall(temp_path)
     opened_file = []
     extract_image = get_images_from_path(temp_path)
-    logger.info('Extract images:' + extract_image.join('\n'))
     if len(extract_image) < 1:
         volume.delete()
     else:
