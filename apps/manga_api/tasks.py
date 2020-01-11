@@ -25,7 +25,7 @@ def parse_data_from_archive(archive_id, manga_volume):
     instance = MangaArchive.objects.get(pk=archive_id)
     volume = MangaVolume.objects.get(id=manga_volume)
     archive_path = instance.archive.path
-    temp_path = os.path.join('/media/temp', str(instance.id) + '/')
+    temp_path = os.path.join('/home/manga/manga/media/temp', str(instance.id) + '/')
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
