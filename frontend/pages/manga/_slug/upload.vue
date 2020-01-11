@@ -13,7 +13,11 @@
             Add new part for "{{mangaData.english_name}}"
           </v-toolbar-title>
         </v-toolbar>
-        <v-card-text>
+        <v-card-text class="text-center">
+          <v-alert text type="warning">All files in archive MUST have english name without special symbol</v-alert>
+          <v-alert text type="info">Select the archive with the manga to download. We will automatically add all
+            pictures to the site.
+          </v-alert>
           <v-container>
             <v-form v-model="valid">
               <v-row>

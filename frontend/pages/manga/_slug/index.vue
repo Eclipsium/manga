@@ -99,6 +99,17 @@
               loading
             >
             </v-btn>
+            <v-btn
+              icon
+              v-if="$store.state.user.isAdmin"
+              color="error"
+              @click="deleteManga(item)"
+            >
+              <v-icon
+              >
+                mdi-delete
+              </v-icon>
+            </v-btn>
           </template>
         </v-data-table>
         <div class='text-center mt-4'>
@@ -319,6 +330,10 @@
         }
       },
       readMangaItem(item) {
+        this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
+        this.readMangaDialog = true
+      },
+      deleteManga(item) {
         this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
         this.readMangaDialog = true
       },

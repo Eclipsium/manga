@@ -57,3 +57,11 @@ class MangaImageViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = MangaImage
         fields = ('sort_index', 'image')
+
+
+class MangaVolumeSerializer(serializers.ModelSerializer):
+    """Serialuzer for volume"""
+
+    class Meta:
+        model = MangaVolume
+        field = ('id',)

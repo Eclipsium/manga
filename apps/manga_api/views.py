@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from apps.manga_api.models import Manga, MangaVolume, MangaArchive, MangaImage
 from apps.manga_api.permissions import IsAdminUserOrReadOnly
 from apps.manga_api.serializers import MangaSerializer, MangaHomePageSerializer, MangaListSerializer, \
-    MangaArchiveSerializer, MangaImageViewSerializer
+    MangaArchiveSerializer, MangaImageViewSerializer, MangaVolumeSerializer
 from .filters import PromoteAndArtistsFilter
 from .tasks import parse_task_data
 
@@ -62,6 +62,20 @@ class MangaLastAddView(APIView):
         #  generator to make unique dict from response list
         manga_set = list({v['slug']: v for v in manga_set}.values())
         return Response({'results': manga_set})
+
+
+class MangaVolumeDeleteView(generics.DestroyAPIView):
+    permission_classes = IsAdminUserOrReadOnly
+    serializer_class = MangaVolumeSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        volume_pk = kwargs['pk']
+        try:
+            volume = MangaVolume.objects.get(pk=volume_pk)
+        except ObjectDoesNotExist:
+            return Response('error: Volume with id ' + volume_pk + ' not found', status=status.HTTP_404_NOT_FOUND)
+        volume.delete()
+        return Response('deleted!', status=status.HTTP_200_OK)
 
 
 class MangaVolumeCreateView(APIView):

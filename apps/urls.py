@@ -41,6 +41,7 @@ urlpatterns = [
     path('artist/<slug:slug>/', MangaSearchArtistView.as_view()),
 
     path('volume/<int:pk>/images/', MangaImageListView.as_view()),
+    path('volume/<int:pk>/', MangaVolumeDeleteView.as_view()),
 
     url(r'^', include(router.urls)),
     # path('manga/<slug>/', MangaDetailView.as_view()),
