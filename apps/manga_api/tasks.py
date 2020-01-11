@@ -16,7 +16,6 @@ def get_images_from_path(temp_path):
     files = [f for f in glob.glob(os.path.join(temp_path, "**/*.jpg"), recursive=True)]
     if not files:
         files = [f for f in glob.glob(os.path.join(temp_path, "**/*.png"), recursive=True)]
-
     files.sort()
     return files
 
@@ -45,7 +44,8 @@ def parse_data_from_archive(archive_id, manga_volume):
     logger.info('Images: ' + str(extract_image))
 
     if len(extract_image) < 1:
-        volume.delete()
+        return
+        # volume.delete()
     else:
         for index in range(len(extract_image)):
             current_image = MangaImage()
