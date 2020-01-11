@@ -12,10 +12,10 @@ from apps.manga_api.models import MangaArchive, MangaImage, MangaVolume
 logger = get_task_logger(__name__)
 
 
-def get_images_from_path(current_path):
-    files = [f for f in glob.glob(current_path + "**/*.jpg", recursive=True)]
+def get_images_from_path(temp_path):
+    files = [f for f in glob.glob(temp_path + "**/*.jpg", recursive=True)]
     if not files:
-        files = [f for f in glob.glob(current_path + "**/*.png", recursive=True)]
+        files = [f for f in glob.glob(temp_path + "**/*.png", recursive=True)]
     return files
 
 
@@ -29,11 +29,13 @@ def parse_data_from_archive(archive_id, manga_volume):
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
+        logger.info('temp path created')
 
     Archive(archive_path).extractall(temp_path)
     opened_file = []
     extract_image = get_images_from_path(temp_path)
-    logger.info(extract_image)
+    logger.info('Images: ' + str(extract_image))
+    logger.info('Archive path' + archive_path)
 
     if len(extract_image) < 1:
         volume.delete()
