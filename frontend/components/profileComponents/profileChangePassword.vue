@@ -8,17 +8,18 @@
     >
       <v-icon left color="white">mdi-lock-alert</v-icon>
       <v-toolbar-title class="headline font-weight-regular white--text">
-        Управление паролем и аккаунтом
+        Setting password and account
       </v-toolbar-title>
     </v-toolbar>
     <v-card-text class="text-center">
       <v-btn
+        disabled
         class="mr-2"
         color="warning"
         dark
         @click.stop="changePasswordDialog = true"
       >
-        Изменить пароль
+        Change password
       </v-btn>
       <v-dialog
         v-model="changePasswordDialog"
@@ -69,7 +70,7 @@
               color="error"
               @click="changePasswordDialog = false"
             >
-              Отмена
+              cancel
             </v-btn>
             <v-spacer/>
             <v-btn
@@ -78,18 +79,19 @@
               @click="changePasswordDialog = false"
               :disabled="!passwordValid"
             >
-              Изменить пароль
+              Change password
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-btn
+        disabled
         class="ml-2"
         color="error"
         dark
         @click.stop="deleteProfileDialog = true"
       >
-        Удалить аккаунт
+        Delete account
       </v-btn>
       <v-dialog
         v-model="deleteProfileDialog"
@@ -113,7 +115,7 @@
               color="success"
               @click="deleteProfileDialog = false"
             >
-              Отмена
+              cancel
             </v-btn>
             <v-spacer/>
             <v-btn
@@ -121,7 +123,7 @@
               color="error"
               @click="deleteProfileDialog = false"
             >
-              Удалить
+              Delete
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -142,14 +144,14 @@
         changePasswordDialog: false,
         deleteProfileDialog: false,
         passwordRules: [
-          v => !!v || 'Введите пароль',
-          v => (v && v.length >= 6) || 'Пароль должен быть больше 6 символов!'
+          v => !!v || 'Input password',
+          v => (v && v.length >= 6) || 'Password must be more than 6 symbols'
         ],
       }
     },
     computed: {
       comparePassword() {
-        return this.newPassword !== this.newPasswordRepeat ? 'Пароли не совпадают!' : null
+        return this.newPassword !== this.newPasswordRepeat ? 'Password must be compare!' : null
       },
     }
   }

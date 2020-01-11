@@ -7,7 +7,7 @@
       <v-toolbar-title color="success">
         <v-icon left color="white">mdi-face-profile</v-icon>
       </v-toolbar-title>
-      <v-toolbar-title class="headline font-weight-regular white--text">Фото профиля
+      <v-toolbar-title class="headline font-weight-regular white--text">User avatar
       </v-toolbar-title>
     </v-toolbar>
     <v-card-text>

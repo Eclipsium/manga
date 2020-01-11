@@ -66,7 +66,7 @@ class Manga(models.Model):
     descriptions = models.TextField('Description', max_length=500)
     slug = models.SlugField('url', unique=True, blank=True, null=True)
     artists = ArrayField(models.CharField(verbose_name='Artists', max_length=200), blank=True, null=True)
-    poster = models.ImageField('Poster', upload_to=get_poster_path, blank=True  )
+    poster = models.ImageField('Poster', upload_to=get_poster_path, blank=True)
     rating = models.FloatField('Rating', default=0)
     is_promoted = models.BooleanField('Recommended', default=False)
 

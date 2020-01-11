@@ -34,9 +34,11 @@ sudo service postgresql stop
 
 ###Настройка сервера###
 adduser manga
+
 sudo apt-get install nginx
 cd /etc/nginx/sites-available
 nginx -s reload
+
 sudo vim default
 sudo touch .env
 sudo npm install pm2 -g
@@ -44,3 +46,4 @@ pm2 start npm -- start
 
 gunicorn --daemon -b 92.63.105.56:8000 manga.wsgi:application
 
+ps axu | grep gunicorn
