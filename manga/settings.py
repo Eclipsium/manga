@@ -123,7 +123,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'manga.urls'
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend/')
 STATIC_URL = '/static/'
-STATUC_ROOT = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
