@@ -61,7 +61,7 @@ def parse_data_from_archive(archive_id, manga_volume):
         for file in opened_file:
             file.close()
 
-    shutil.rmtree(temp_path)
+    # shutil.rmtree(temp_path)
     instance.delete()
 
 
