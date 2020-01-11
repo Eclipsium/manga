@@ -12,6 +12,7 @@ from apps.manga_api.models import Manga, MangaVolume, MangaArchive, MangaImage
 from apps.manga_api.permissions import IsAdminUserOrReadOnly
 from apps.manga_api.serializers import MangaSerializer, MangaHomePageSerializer, MangaListSerializer, \
     MangaArchiveSerializer, MangaImageViewSerializer
+from .filters import PromoteAndArtistsFilter
 from .tasks import parse_task_data
 
 
@@ -23,7 +24,8 @@ class MangaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUserOrReadOnly, ]
     lookup_field = 'slug'
     ordering_fields = ['rating', 'is_promoted']
-    # filterset_fields = ()  # here
+    filterset_class = PromoteAndArtistsFilter
+    # filterset_fields = ('is_promoted',)
 
 
 class MangaListView(generics.ListAPIView):
@@ -54,6 +56,7 @@ class MangaLastAddView(APIView):
                 'rating': volume.manga.rating,
                 'english_name': volume.manga.english_name,
                 'slug': volume.manga.slug,
+                'is_promoted': volume.manga.is_promoted,
             }
             manga_set.append(response)
         #  generator to make unique dict from response list
@@ -82,6 +85,16 @@ class MangaVolumeCreateView(APIView):
                 return Response('created', status=status.HTTP_201_CREATED)
             except IntegrityError:
                 return Response('message: Manga volume already created!', status=status.HTTP_400_BAD_REQUEST)
+
+
+class MangaSearchArtistView(generics.ListAPIView):
+    serializer_class = MangaSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        print(slug)
+        return Manga.objects.filter(artists=slug)
 
 
 class MangaMainPageView(APIView):

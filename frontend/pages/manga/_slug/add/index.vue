@@ -82,7 +82,15 @@
 
   export default {
     name: "index",
-    middleware: 'auth',
+    middleware: 'notAuth',
+    head() {
+      return {
+        title: 'Add volume for ' + this.mangaData.english_name,
+        meta: [
+          {hid: 'home', name: 'description', content: 'Add new volume for ' + this.mangaData.english_name}
+        ]
+      }
+    },
     async asyncData({$axios, params}) {
       // We can use async/await ES6 feature
       try {
@@ -141,20 +149,24 @@
           setTimeout(function () {
             router.go(-1)
           }, 1000)
-        }).catch(function (res) {
+        }).catch((res) => {
           let payload = {
             'type': 'error',
             'message': res.response.data[0]
           };
-          store.commit('status/setAlert', payload)
+          store.commit('status/setAlert', payload);
+          this.archive = null
         })
           .finally(function () {
             store.commit('status/onProcess', false);
           })
       }
     },
-    created: function () {
+    mounted () {
       this.$store.commit('status/cleanAlert');
+      if(this.$store.state.user.isAuth){
+        this.$router.push('/')
+      }
     },
     computed: {
       ...mapGetters({

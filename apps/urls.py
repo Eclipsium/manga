@@ -38,6 +38,7 @@ urlpatterns = [
     path('manga/list/', MangaListView.as_view()),
     path('manga/recommend/', MangaPromotedView.as_view()),
     path('manga/add/', MangaArchiveCreateView.as_view()),
+    path('artist/<slug:slug>/', MangaSearchArtistView.as_view()),
 
     path('volume/<int:pk>/images/', MangaImageListView.as_view()),
 

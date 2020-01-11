@@ -19,5 +19,8 @@ export default {
   },
   getIsFirstTime(state){
     return state.isFirstTime
+  },
+  getIsAuth(state){
+    return state.isAuth
   }
 };

@@ -1,5 +1,5 @@
 export default {
-  setTopManga(store, [payload]) {
+  setTopManga(store, payload) {
     store.topManga = payload
   },
   setLastManga(store, payload){
@@ -14,4 +14,7 @@ export default {
   setMangaCatalog(store, payload){
     store.mangaCatalog = payload
   },
+  clearMangaCatalog(store){
+    store.mangaCatalog = []
+  }
 }

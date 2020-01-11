@@ -20,11 +20,11 @@
             </h1>
           </v-card-text>
           <v-card-actions>
-            <v-btn :to="'/'" color="primary">
+            <v-btn :to="'/'" color="primary" class="mb-4">
               To main page
             </v-btn>
             <v-spacer/>
-            <v-btn @click="writeDeveloper" color="primary"  v-if="error.statusCode !== 404">
+            <v-btn @click="writeDeveloper" color="primary" v-if="error.statusCode !== 404" class="mb-4">
               Email Developer
             </v-btn>
           </v-card-actions>
@@ -38,6 +38,10 @@
   export default {
     layout: 'empty',
     props: {
+      message: {
+        type: String,
+        default: null
+      },
       error: {
         type: Object,
         default: null
@@ -63,7 +67,7 @@
       }
     },
     methods: {
-      writeDeveloper(){
+      writeDeveloper() {
         window.open('mailto:abiogenesis70ru@gmail.com', '_blank');
       }
     }

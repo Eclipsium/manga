@@ -160,19 +160,19 @@ WSGI_APPLICATION = 'manga.wsgi.application'
 DATABASES = {
     'default': {
         #windows
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'manga_db',
-        # 'USER': 'manga_admin',
-        # 'PASSWORD': 'mangareader',
-        # 'HOST': '127.0.0.1',
-        # 'PORT': '5432',
-        #ubuntu
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'manga_db',
-        'USER': 'manga',
-        'PASSWORD': 'manga_password11',
+        'USER': 'manga_admin',
+        'PASSWORD': 'mangareader',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+        #ubuntu
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'manga_db',
+        # 'USER': 'manga',
+        # 'PASSWORD': 'manga_password11',
+        # 'HOST': '127.0.0.1',
+        # 'PORT': '5432',
 
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),

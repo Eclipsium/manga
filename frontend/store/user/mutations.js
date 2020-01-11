@@ -5,7 +5,7 @@ export default {
   setUserData(state, payload) {
     state.email = payload.email;
     state.avatar = payload.avatar;
-    state.isAdmin = payload.is_staff;
+    state.isAdmin = payload.is_superuser;
     state.nickname = payload.nickname;
     state.id = payload.id
   },

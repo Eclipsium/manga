@@ -5,7 +5,7 @@
       color="success"
     >
       <v-icon left color="white">mdi-settings</v-icon>
-      <v-toolbar-title class="headline font-weight-regular white--text">
+      <v-toolbar-title class="headline font-weight-regular white--text" href="#results" id="results">
         Results
       </v-toolbar-title>
     </v-toolbar>
@@ -94,6 +94,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
+
   export default {
     name: "fullListManga",
     data: () => ({
@@ -112,6 +113,15 @@
       toMangaPage(url) {
         this.$router.push('/manga/' + url + '/')
       },
+    },
+    watch: {
+      page() {
+        this.$vuetify.goTo('#results', {
+          duration: 300,
+          offset: 100,
+          easing: 'easeInOutCubic',
+        })
+      }
     }
   }
 </script>

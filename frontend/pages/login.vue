@@ -4,6 +4,7 @@
       class="fill-height"
       fluid
     >
+    >
       <v-snackbar
         v-if="isAlert"
         v-model="snackbar"
@@ -116,20 +117,27 @@
   export default {
     name: "login",
     layout: 'blank',
-    middleware: 'notAuth',
+    middleware: 'auth',
+    head() {
+      return {
+        title: 'Login page',
+        meta: [
+          {hid: 'login', name: 'description', content: 'Login page for manga-exhange.ru'}
+        ]
+      }
+    },
     data: () => ({
       snackbar: true,
-      text: 'Hello, I\'m a snackbar',
       valid: false,
       password: null,
       passwordRules: [
-        v => !!v || 'Введите пароль',
-        v => (v && v.length >= 6) || 'Пароль должен быть больше 6 символов!'
+        v => !!v || 'Input password!',
+        v => (v && v.length >= 6) || 'Password must be more 6 symbols!!'
       ],
       email: '',
       emailRules: [
-        v => !!v || 'Введите почту!',
-        v => /.+@.+\..+/.test(v) || 'Почта введена не правильно!'
+        v => !!v || 'Input email!',
+        v => /.+@.+\..+/.test(v) || 'Email is incorrect!'
       ],
     }),
     methods: {
@@ -177,9 +185,6 @@
     created() {
       this.$store.commit('status/cleanAlert');
     },
-    props: {
-      source: String
-    }
   }
 </script>
 

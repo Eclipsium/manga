@@ -25,6 +25,14 @@
 
   export default {
     name: "index",
+    head() {
+      return {
+        title: 'Profile settings',
+        meta: [
+          {hid: 'home', name: 'description', content: 'Change profile for current user'}
+        ]
+      }
+    },
     components: {
       profileMainConfig,
       profilePhoto,

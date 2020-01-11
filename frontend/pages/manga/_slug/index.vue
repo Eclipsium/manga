@@ -78,7 +78,7 @@
           :sort-desc="[false]"
         >
           <template v-slot:item.user="{ item }">
-            <a href="#">{{item.created_by}}</a>
+            <nuxt-link :to="'/profile/'+ item.created_by + '/'">{{item.created_by}}</nuxt-link>
           </template>
           <template v-slot:item.action="{ item }">
             <v-btn
@@ -192,21 +192,29 @@
 
   export default {
     name: "index",
-    async asyncData({$axios, params}) {
+    async asyncData({$axios, params, error}) {
       try {
         const mangaData = await $axios.$get('/api/v1/manga/' + params.slug + "/");
         const mangaVolumes = await $axios.$get('/api/v1/manga/' + params.slug + '/volumes/');
         const votes = await $axios.$get('/api/v1/votes/?manga__slug=' + params.slug);
         return {mangaData, mangaVolumes, votes}
       } catch (e) {
-        console.log('Server error!')
+        error({
+          statusCode: 404})
+      }
+    },
+    head() {
+      return {
+        title: this.mangaData.english_name,
+        meta: [
+          {hid: 'home', name: 'description', content: 'Read and add volumes for ' + this.mangaData.english_name}
+        ]
       }
     },
     mounted() {
       if(this.token){
         this.$axios.setToken('Token ' + this.token);
       }
-      this.tempRating = this.mangaData.rating;
       this.recommend = this.mangaData.is_promoted;
     },
     watch: {
@@ -222,7 +230,7 @@
           'manga': this.mangaData.id,
           'vote_int': this.tempRating
         };
-        if (this.tempRating !== 0 && !this.isVoted && this.token) {
+        if (this.tempRating !== 0 && !this.isVoted && this.token && !this.voted) {
           this.$axios.$post('/api/v1/votes/', payload);
           this.voted = true
         }

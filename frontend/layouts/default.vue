@@ -92,7 +92,7 @@
         <v-toolbar-title v-text="title"/>
         <v-spacer/>
         <v-toolbar-items class="hidden-md-and-down">
-          <v-btn v-for="(item, i) in loginItems"
+          <v-btn v-for="(item, i) in $store.state.user.isAuth ? loginItems: logoutItems"
                  :key="i"
                  :to="item.to"
                  :color="item.color ? item.color : ''"
@@ -112,6 +112,7 @@
             :loading="isLoading"
             :search-input.sync="search"
             color="primary"
+            placeholder="Start typing to Search"
             item-text="text"
             item-value="value"
             append-icon="mdi-magnify"
@@ -131,16 +132,17 @@
             </template>
           </v-autocomplete>
         </v-toolbar-items>
+        <v-spacer/>
         <v-toolbar-items>
           <v-btn
             :to="'/login/'"
             v-if="!$store.state.user.isAuth"
             color="primary"
-            text
           >
             login
           </v-btn>
         </v-toolbar-items>
+
         <v-toolbar-items class="hidden-md-and-down" v-if="$store.state.user.isAuth">
           <v-menu offset-y>
             <template v-slot:activator="{ on }">
@@ -175,26 +177,31 @@
           </v-menu>
         </v-toolbar-items>
       </v-app-bar>
-      </client-only>
-        <v-content>
-          <v-container>
-            <nuxt/>
-          </v-container>
-        </v-content>
+    </client-only>
+    <v-content>
+      <v-container>
+        <nuxt/>
+      </v-container>
+    </v-content>
+    <footer-component/>
   </v-app>
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
+  import footerComponent from '../components/footerComponent'
 
   export default {
+    components:{
+      footerComponent,
+    },
     data() {
       return {
         isLoading: false,
         model: null,
         search: null,
         results: null,
-        searchItems: [],
+        searchResults: [],
 
         drawer: false,
         loginItems: [
@@ -215,6 +222,18 @@
             color: 'success'
           }
         ],
+        logoutItems: [
+          {
+            icon: 'mdi-home',
+            title: 'Home',
+            to: '/',
+          },
+          {
+            icon: 'mdi-chart-bubble',
+            title: 'Catalog',
+            to: '/manga/'
+          },
+        ],
         profileItems: [
           {title: 'My profile', to: '/profile/', icon: 'mdi-account'},
         ],
@@ -223,47 +242,49 @@
     },
     methods: {
       logout() {
-        this.$store.dispatch('user/LOGOUT')
+        this.$store.dispatch('user/LOGOUT');
         this.$router.push('/')
       }
     },
     watch: {
       async search(val) {
-        // Items have already been loaded
-        if (!this.search) return;
-
-        // Items have already been requested
         if (this.isLoading) return;
-        // Lazily load input items
+        if (!this.search) return;
 
         if (this.search.length > 3) {
           this.isLoading = true;
-          const response = await this.$axios.$get('/api/v1/manga/?search=' + this.search);
-          let results = [];
-          if (response.count) {
-            for (let item in response.results) {
-              results.push({'text': response.results[item].english_name, 'value': response.results[item].slug})
-            }
-            this.$store.commit('search/setSearchResult', results)
-          }
-          this.isLoading = false;
-          return val;
+          await this.$axios.$get('/api/v1/manga/?search=' + this.search)
+            .then((response) => {
+              if (response.count) {
+                let results = [];
+                for (let item in response.results) {
+                  results.push({'text': response.results[item].english_name, 'value': response.results[item].slug})
+                }
+                this.searchResults = results;
+              }
+            }).catch((e) => {
+
+            }).finally(() => {
+              setTimeout(()=>{
+                this.isLoading = false;
+              }, 200)
+            })
         }
       },
       model() {
         if (this.model) {
           this.$router.push('/manga/' + this.model.value + '/');
-          this.$store.commit('search/clearSearchResult');
-          this.model = null;
+          this.searchResults = null;
         }
       }
     },
     computed: {
-      ...mapGetters({
-        avatar: 'user/getUserAvatar',
-        nickname: 'user/getUserNickName',
-        searchResults: 'search/getSearchResult',
-      }),
-    },
+      ...
+        mapGetters({
+          avatar: 'user/getUserAvatar',
+          nickname: 'user/getUserNickName',
+        }),
+    }
+    ,
   }
 </script>

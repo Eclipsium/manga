@@ -6,11 +6,11 @@ User = get_user_model()
 
 
 class UserMeSerializer(serializers.ModelSerializer):
-    is_staff = serializers.ReadOnlyField()
+    is_superuser = serializers.ReadOnlyField()
 
     class Meta:
         model = User
-        fields = ("id", "email", "nickname", "is_staff", "avatar")
+        fields = ("id", "email", "nickname", "avatar", 'is_superuser')
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

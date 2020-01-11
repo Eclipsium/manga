@@ -10,5 +10,8 @@ export default {
   },
   getLastManga(state){
     return state.lastManga
+  },
+  getTopManga(state){
+    return state.topManga
   }
 };

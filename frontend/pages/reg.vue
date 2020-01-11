@@ -107,7 +107,15 @@
   export default {
     name: "reg",
     layout: 'blank',
-    middleware: 'notAuth',
+    middleware: 'auth',
+    head() {
+      return {
+        title: 'Create account',
+        meta: [
+          {hid: 'reg', name: 'description', content: 'Create new account page'}
+        ]
+      }
+    },
     data: () => ({
       snackbar: true,
       valid: false,

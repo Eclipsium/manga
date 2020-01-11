@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height>
+  <v-container>
     <v-row>
       <v-col cols="12" md="4">
         <v-navigation-drawer
@@ -52,6 +52,14 @@
 
   export default {
     name: "index",
+    head() {
+      return {
+        title: 'Catalog',
+        meta: [
+          {hid: 'home', name: 'description', content: 'Search and filter manga'}
+        ]
+      }
+    },
     components: {
       fullListManga,
     },
@@ -105,7 +113,7 @@
       isDescending: true,
       radioParams: [
         {'label': 'Rating', 'value': 1},
-        {'label': 'New added', 'value': 2},
+        {'label': 'Last updated', 'value': 2},
         {'label': 'Recommended', 'value': 3},
       ],
       radioGroup: 1,

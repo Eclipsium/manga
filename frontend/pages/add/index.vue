@@ -187,7 +187,15 @@
 
   export default {
     name: "index",
-    middleware: 'auth',
+    middleware: 'notAuth',
+    head() {
+      return {
+        title: 'Add manga',
+        meta: [
+          {hid: 'home', name: 'description', content: 'Add manga to read'}
+        ]
+      }
+    },
     data: () => ({
       text: '',
       isValid: true,
