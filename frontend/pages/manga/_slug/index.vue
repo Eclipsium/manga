@@ -7,9 +7,13 @@
         <v-row class="justify-center">
           <p class="display-1">
             {{mangaData.english_name}}
-            <v-icon large color="warning" v-if="recommend">
-              mdi-fire
-            </v-icon>
+            <client-only>
+
+              <v-icon large color="warning" v-if="recommend">
+                mdi-fire
+              </v-icon>
+
+            </client-only>
           </p>
           <p class="subtitle" v-if="mangaData.japan_name">
             {{mangaData.japan_name}}
@@ -25,35 +29,38 @@
           />
         </v-row>
         <v-row class="justify-center align-center mt-3">
-          <v-rating
-            v-model="tempRating"
-            :readonly="isVoted || !$store.state.user.isAuth || voted"
-            color="yellow darken-3"
-            background-color="grey darken-1"
-            hover
-          />
+          <client-only>
+            <v-rating
+              v-model="tempRating"
+              :readonly="isVoted || !$store.state.user.isAuth || voted"
+              color="yellow darken-3"
+              background-color="grey darken-1"
+              hover
+            />
+          </client-only>
           <span class="subtitle">({{mangaData.rating}}) {{votes.count}} votes</span>
         </v-row>
-        <v-row
-          v-if="$store.state.user.isAdmin"
-          class="justify-center align-center mt-2">
-          <v-btn dark color="purple lighten-1" v-if="!recommend" @click="submitRecommend">
-            recommend
-          </v-btn>
-          <v-btn dark color="purple lighten-1"  v-if="recommend" @click="submitRecommend">
-            not recommend
-          </v-btn>
-        </v-row>
+        <client-only>
+          <v-row
+            v-if="$store.state.user.isAdmin"
+            class="justify-center align-center mt-2">
+            <v-btn dark color="purple lighten-1" v-if="!recommend" @click="submitRecommend">
+              recommend
+            </v-btn>
+            <v-btn dark color="purple lighten-1" v-if="recommend" @click="submitRecommend">
+              not recommend
+            </v-btn>
+          </v-row>
+        </client-only>
       </v-col>
       <v-col
-        cols=" 12
-        "
+        cols="12"
         md="6">
-        <v-row>
+        <v-row v-if="mangaData.descriptions">
           <p class="title">Description:</p>
           <p>{{mangaData.descriptions}}</p>
         </v-row>
-        <v-row v-if="this.mangaData.artists[0]">
+        <v-row v-if="mangaData.artists[0]">
           <p class="title mr-4 align-center">Artists: </p>
           <v-chip
             color="primary"
@@ -78,7 +85,13 @@
           :sort-desc="[false]"
         >
           <template v-slot:item.user="{ item }">
-            <nuxt-link :to="'/profile/'+ item.created_by + '/'">{{item.created_by}}</nuxt-link>
+            <nuxt-link
+              :to="'/profile/'+ item.created_by + '/'"
+              :event="isDeleted(item) ? '' : 'click'"
+              :class="isDeleted(item) ? 'disabled': ''"
+            >
+              {{item.created_by}}
+            </nuxt-link>
           </template>
           <template v-slot:item.action="{ item }">
             <v-btn
@@ -99,103 +112,104 @@
               loading
             >
             </v-btn>
-            <v-btn
-              icon
-              v-if="$store.state.user.isAdmin"
-              color="error"
-              @click="deleteManga(item)"
-            >
-              <v-icon
+            <client-only>
+              <v-btn
+                icon
+                v-if="$store.state.user.isAdmin"
+                color="error"
+                @click="deleteForm = true"
               >
-                mdi-delete
-              </v-icon>
-            </v-btn>
+                <v-icon>
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </client-only>
           </template>
         </v-data-table>
         <div class='text-center mt-4'>
-          <v-btn
-            v-if="$store.state.user.isAuth"
-            color="primary"
-            :to="'upload/'"
-          >
-            Add manga volume
-          </v-btn>
+          <client-only>
+            <v-btn
+              v-if="$store.state.user.isAuth"
+              color="primary"
+              :to="'upload/'"
+            >
+              Add manga volume
+            </v-btn>
+          </client-only>
         </div>
       </v-col>
     </v-row>
-    <v-row
-      class="fill-height"
-    >
-      <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
-        <v-card>
-          <v-toolbar dark dense flat>
-            <v-toolbar-title>{{mangaData.english_name}}</v-toolbar-title>
-            <v-spacer/>
-            <v-btn icon dark @click="closeDialog()">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-toolbar>
-          <v-card-text height="100%">
-            <v-carousel
-              hide-delimiters
-              :show-arrows="true"
-              show-arrows-on-hover
-              :continuous="false"
-              :next-icon="hasNextArrow? 'mdi-chevron-right': false"
-              height="100%"
-              v-model="currentImageIndex"
+    <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
+      <v-card>
+        <v-toolbar dark dense flat>
+          <v-toolbar-title>{{mangaData.english_name}}</v-toolbar-title>
+          <v-spacer/>
+          <v-btn icon dark @click="closeDialog()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text height="100%">
+          <v-carousel
+            hide-delimiters
+            :show-arrows="true"
+            :continuous="false"
+            :next-icon="hasPrevArrow? 'mdi-chevron-right': false"
+            height="100%"
+            v-model="currentImageIndex"
+          >
+            <v-carousel-item
+              v-for="(item, index) in volumeImages"
+              :key="index"
             >
-              <v-carousel-item
-                v-for="(item, index) in volumeImages"
-                :key="index"
-              >
-                <template v-slot:default>
-                  <div class="d-flex">
-                    <v-img
-                      :src="getImageFromIndex(index)"
-                      @click="toNextImage()"
-                      :aspect-ratio="0.7"
-                      :max-height="imageHeight"
-                      contain
-                      :position="getPosition(index)"
-                    >
-                      <template v-slot:placeholder>
-                        <v-row
-                          class="fill-height ma-0"
-                          align="center"
-                          justify="center"
-                        >
-                          <v-progress-circular indeterminate color="grey lighten-5"/>
-                        </v-row>
-                      </template>
-                    </v-img>
-                    <v-img
-                      :src="getImageFromIndex(index+1)"
-                      v-if="isHorizontal"
-                      @click="toNextImage()"
-                      :aspect-ratio="0.7"
-                      :max-height="imageHeight"
-                      contain
-                      :position="getPosition(index+1)"
-                    >
-                      <template v-slot:placeholder>
-                        <v-row
-                          class="fill-height ma-0"
-                          align="center"
-                          justify="center"
-                        >
-                          <v-progress-circular indeterminate color="grey lighten-5"/>
-                        </v-row>
-                      </template>
-                    </v-img>
-                  </div>
-                </template>
-              </v-carousel-item>
-            </v-carousel>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </v-row>
+              <template v-slot:default>
+                <div class="d-flex">
+                  <v-img
+                    :src="getImageFromIndex(index-1)"
+                    @click="toNextImage()"
+                    v-if="isHorizontal"
+                    :aspect-ratio="0.7"
+                    :max-height="imageHeight"
+                    contain
+                    :position="getPosition(index-1)"
+                  >
+                    <template v-slot:placeholder>
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                      >
+                        <v-progress-circular indeterminate color="grey lighten-5"/>
+                      </v-row>
+                    </template>
+                  </v-img>
+                  <v-img
+                    :src="getImageFromIndex(index)"
+                    @click="toNextImage()"
+                    :aspect-ratio="0.7"
+                    :max-height="imageHeight"
+                    contain
+                    :position="getPosition(index)"
+                  >
+                    <template v-slot:placeholder>
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                      >
+                        <v-progress-circular indeterminate color="grey lighten-5"/>
+                      </v-row>
+                    </template>
+                  </v-img>
+                </div>
+              </template>
+            </v-carousel-item>
+          </v-carousel>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="deleteMangaDialog">
+
+    </v-dialog>
   </v-container>
 </template>
 
@@ -212,7 +226,8 @@
         return {mangaData, mangaVolumes, votes}
       } catch (e) {
         error({
-          statusCode: 404})
+          statusCode: 404
+        })
       }
     },
     head() {
@@ -224,7 +239,7 @@
       }
     },
     mounted() {
-      if(this.token){
+      if (this.token) {
         this.$axios.setToken('Token ' + this.token);
       }
       this.recommend = this.mangaData.is_promoted;
@@ -232,8 +247,18 @@
     watch: {
       //Округляем индекс при прокрутке в 2х страничном режиме
       currentImageIndex() {
-        if (this.isHorizontal) {
-          this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2
+        if (this.isHorizontal){
+          if (this.currentImageIndex > this.lastImageIndex) {
+            this.currentImageIndex  = Math.floor(this.currentImageIndex / 2) * 2 + 2;
+            this.lastImageIndex = this.currentImageIndex;
+            return;
+          }
+          if (this.currentImageIndex % 2 === 0 && this.currentImageIndex <= this.lastImageIndex){
+            this.lastImageIndex = this.currentImageIndex;
+            return
+          } else {
+            this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2;
+          }
         }
       },
       //Update rating value
@@ -280,10 +305,10 @@
         return this.$vuetify.breakpoint.width > this.$vuetify.breakpoint.height
       },
       //Корректное отображение стрелки вперед
-      hasNextArrow() {
+      hasPrevArrow() {
         if (this.isHorizontal && this.volumeImages.length - this.currentImageIndex > 2) {
           return true
-        } else return !this.isHorizontal && this.volumeImages.length - this.currentImageIndex >= 1;
+        } else return !this.isHorizontal && this.volumeImages.length - this.currentImageIndex >= 0;
       },
       ...mapGetters({
         token: 'user/getUserToken',
@@ -297,26 +322,29 @@
         if (!this.isHorizontal) {
           return 'center center'
         } else if (index % 2 === 0) {
-          return 'right center'
-        } else if (index % 2 === 1) {
           return 'left center'
+        } else if (index % 2 === 1) {
+          return 'right center'
         }
       },
-      submitRecommend(){
+      isDeleted(item) {
+        return item.created_by === 'deleted'
+      },
+      submitRecommend() {
         this.recommend = !this.recommend;
         this.$axios.$patch('/api/v1/manga/' + this.mangaData.slug + "/", {'is_promoted': this.recommend})
       },
       toNextImage() {
         if (this.isHorizontal) {
-          if (this.volumeImages.length - this.currentImageIndex > 2) {
-            this.currentImageIndex += 2;
+          if (this.currentImageIndex - this.volumeImages.length < 2) {
+            this.currentImageIndex -= 2;
           } else {
             this.closeDialog()
           }
         }
         if (!this.isHorizontal) {
-          if (this.volumeImages.length - this.currentImageIndex > 1) {
-            this.currentImageIndex += 1;
+          if (this.currentImageIndex - this.volumeImages.length < 1) {
+            this.currentImageIndex -= 1;
           } else {
             this.closeDialog()
           }
@@ -331,15 +359,17 @@
       },
       readMangaItem(item) {
         this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
+        this.currentImageIndex = item.image_count - 1;
+        this.lastImageIndex = item.image_count - 1;
         this.readMangaDialog = true
       },
       deleteManga(item) {
         this.$axios.$delete('api/v1/volume/' + item.id + '/delete/')
-        .then(()=>{
-          this.mangaVolumes = this.mangaVolumes.filter(function( obj ) {
-            return obj.id !== item.id;
-          })
-        }).catch((e)=>{
+          .then(() => {
+            this.mangaVolumes = this.mangaVolumes.filter(function (obj) {
+              return obj.id !== item.id;
+            })
+          }).catch((e) => {
           console.log(e)
         })
       },
@@ -349,15 +379,17 @@
       closeDialog() {
         this.readMangaDialog = false;
         this.currentVolume = null;
-        this.currentImageIndex = null;
+        this.lastImageIndex = 0;
+        this.currentImageIndex = 0;
       },
     }
     ,
     data: () => ({
       voted: false,
+      lastImageIndex: null,
       recommend: false,
       readMangaDialog: false,
-      addMangaDialog: false,
+      deleteMangaDialog: false,
       currentVolume: null,
       currentImageIndex: null,
       tempRating: 0,
@@ -378,4 +410,8 @@
 </script>
 
 <style scoped>
+  .disabled {
+    color: lightgrey;
+    pointer-events: none
+  }
 </style>

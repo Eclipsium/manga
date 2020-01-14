@@ -8,48 +8,28 @@
     >
       <v-icon left color="white">mdi-book-plus</v-icon>
       <v-toolbar-title class="headline font-weight-regular white--text">
-        Add new Manga
+        Add new Comic
       </v-toolbar-title>
     </v-toolbar>
     <v-card-text class="text-center">
       <v-container>
         <v-form v-model="isValid">
           <v-row>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="12">
               <v-text-field
-                label="English name"
+                label="Title"
                 v-model="engName"
                 :rules="nameRules"
                 :disabled="isComplete"
                 outlined
               />
             </v-col>
-            <v-col cols="12" md="2">
-              <v-checkbox
-                v-model="hasJapanTitle"
-                :disabled="isComplete"
-                label="Has japan title?"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-text-field
-                label="Japan name (optional)"
-                :disabled="!hasJapanTitle || isComplete"
-                v-model="jpnName"
-                :rules="hasJapanTitle ? jpnNameRules: []"
-                outlined
-              />
-            </v-col>
-          </v-row>
-          <v-row>
             <v-col cols="12" md="12">
               <v-textarea
                 v-model="descriptions"
                 :disabled="isComplete"
-                :rules="descRules"
                 outlined
-                label="Descriptions"
+                label="Descriptions (optional)"
               />
             </v-col>
           </v-row>
@@ -105,7 +85,7 @@
                 :disabled="isComplete"
                 :rules="artistsRules"
                 hide-selected
-                label="Add artists"
+                label="Artists"
                 multiple
                 outlined
                 small-chips
@@ -166,7 +146,7 @@
           multi-line
         >
           <p class="text-center">
-            {{!mangaMessage ? 'Manga created!' : mangaMessage }}
+            {{!mangaMessage ? 'Comic created!' : mangaMessage }}
           </p>
           <v-btn
             v-if="!mangaMessage"
@@ -190,40 +170,26 @@
     middleware: 'notAuth',
     head() {
       return {
-        title: 'Add manga',
+        title: 'Add new manga',
         meta: [
-          {hid: 'home', name: 'description', content: 'Add manga to read'}
+          {hid: 'home', name: 'description', content: 'Add new comic page'}
         ]
       }
     },
     data: () => ({
       text: '',
       isValid: true,
-      hasJapanTitle: false,
       isLoading: false,
       engName: '',
-      jpnName: '',
       descriptions: '',
       imageRules: [
         v => !!v || 'Is required',
         v => !v || v.size < 4000000 || 'Poster should less than 4 MB! !',
       ],
-      descRules: [
-        v => !!v || 'Is required',
-        v => (v && v.length >= 20) || 'Field must be 20 characters or more.',
-        v => (v && v.length < 500) || 'Field must be 20 characters or less.',
-      ],
       nameRules: [
         v => !!v || 'Is required!',
         v => (v && v.length <= 50) || 'Field must be 20 characters or less.',
         v => (v && v.length > 4) || 'Field must be more then 4 characters.',
-      ],
-      jpnNameRules: [
-        v => (v && v.length <= 50) || 'Field must be 20 characters or less.',
-        v => (v && v.length > 2) || 'Field must be more then 2 characters.',
-        v => /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B/g
-            .test(v) ||
-          'The field must contain hieroglyphs'
       ],
       artistsRules: [
         v => !!v || 'Is required!',

@@ -49,7 +49,6 @@ class MangaLastAddView(APIView):
             photo_url = request.build_absolute_uri(volume.manga.poster.url)
             response = {
                 'date': volume.create_time.strftime("%d-%m-%Y"),
-                'japan_name': volume.manga.japan_name,
                 'descriptions': volume.manga.descriptions,
                 'poster': photo_url,
                 'volume': volume.volume,
@@ -164,4 +163,4 @@ class MangaImageListView(generics.ListAPIView):
 
     def get_queryset(self):
         volume_pk = self.kwargs['pk']
-        return MangaImage.objects.filter(volume=volume_pk).order_by('sort_index')
+        return MangaImage.objects.filter(volume=volume_pk).order_by('-sort_index')

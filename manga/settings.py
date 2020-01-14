@@ -24,9 +24,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '61dm6v074@bh5*svkolr9d$6&_c-q$11=wgo9-d1^)c18&6!=6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['92.63.105.56', 'www.92.63.105.56', 'www.manga-exchange.ru', 'manga-exchange.ru']
+# ALLOWED_HOSTS = ['92.63.105.56', 'www.92.63.105.56', 'www.manga-exchange.ru', 'manga-exchange.ru']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -75,8 +76,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 DJOSER = {
-    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    # 'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
         'user': 'apps.custom_user.serializers.UserDetailSerializer',
         'current_user': 'apps.custom_user.serializers.UserMeSerializer',
@@ -92,6 +93,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_PAGINATION_CLASS':
@@ -129,11 +131,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AUTH_USER_MODEL = 'custom_user.User'
 SITE = 1
 
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'flamp.parser@gmail.com'
-# EMAIL_HOST_PASSWORD = '7cwPcA2tVeV3'
-# EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST_USER = 'reply@manga-exchange.ru'
+EMAIL_HOST_PASSWORD = 'bX7Q6m4wjUap'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = 'reply@manga-exchange.ru'
 
 TEMPLATES = [
     {
@@ -160,20 +165,20 @@ WSGI_APPLICATION = 'manga.wsgi.application'
 DATABASES = {
     'default': {
         # #windows
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'manga_db',
-        # 'USER': 'manga_admin',
-        # 'PASSWORD': 'mangareader',
-        # 'HOST': '127.0.0.1',
-        # 'PORT': '5432',
-
-        # ubuntu
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'manga_db',
-        'USER': 'manga',
-        'PASSWORD': 'manga_password11',
+        'USER': 'manga_admin',
+        'PASSWORD': 'mangareader',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+
+        # ubuntu
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'manga_db',
+        # 'USER': 'manga',
+        # 'PASSWORD': 'manga_password11',
+        # 'HOST': '127.0.0.1',
+        # 'PORT': '5432',
 
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),

@@ -56,14 +56,13 @@ def get_manga_image_path(instance, filename):
 
 
 def get_sentinel_user():
-    return get_user_model().objects.get_or_create(username='deleted')[0]
+    return get_user_model().objects.get_or_create(email='deleted', nickname='deleted')[0]
 
 
 class Manga(models.Model):
     create_by_user = models.ForeignKey(User, verbose_name='Create by user', on_delete=models.SET(get_sentinel_user))
-    japan_name = models.CharField('Japan title', max_length=100, null=True, blank=True)
     english_name = models.CharField('English title', max_length=100, unique=True)
-    descriptions = models.TextField('Description', max_length=500)
+    descriptions = models.TextField('Description', max_length=500, blank=True, null=True)
     slug = models.SlugField('url', unique=True, blank=True, null=True)
     artists = ArrayField(models.CharField(verbose_name='Artists', max_length=200), blank=True, null=True)
     poster = models.ImageField('Poster', upload_to=get_poster_path, blank=True)

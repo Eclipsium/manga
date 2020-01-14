@@ -2,7 +2,9 @@
   <div>
     <last-manga-component title="Last update volume" dataSource="getLastManga"/>
     <last-manga-component title="Recommended manga" dataSource="getTopManga"/>
-    <first-time-guest v-if="firstTime"/>
+    <client-only>
+      <first-time-guest v-if="firstTime"/>
+    </client-only>
   </div>
 </template>
 
@@ -17,8 +19,8 @@
     async fetch({store, $axios}) {
       let lastMangaData = await $axios.$get('api/v1/manga/last/');
       let topMangaData = await $axios.$get('api/v1/manga/?is_promoted=true');
-      store.commit('manga/setLastManga', lastMangaData.results.slice(0,10).reverse());
-      store.commit('manga/setTopManga', topMangaData.results.slice(0,10))
+      store.commit('manga/setLastManga', lastMangaData.results.slice(0, 10).reverse());
+      store.commit('manga/setTopManga', topMangaData.results.slice(0, 10))
     },
     head() {
       return {

@@ -56,11 +56,7 @@
 <script>
   export default {
     name: "footerComponent",
-    data: () => ({
-      links: [
-        {'text': 'License Agreement', 'url': '/report/', 'icon': 'mdi-license'},
-      ],
-    }),
+    data: () => ({}),
   }
 </script>
 

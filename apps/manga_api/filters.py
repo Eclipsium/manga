@@ -11,3 +11,4 @@ class PromoteAndArtistsFilter(django_filters.FilterSet):
     class Meta:
         model = Manga
         fields = ('artists', 'is_promoted', 'create_by_user')
+

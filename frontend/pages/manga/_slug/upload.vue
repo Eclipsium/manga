@@ -10,7 +10,7 @@
         >
           <v-icon left color="white">mdi-message-plus</v-icon>
           <v-toolbar-title class="headline font-weight-regular white--text">
-            Add new part for "{{mangaData.english_name}}"
+            Upload new volume for "{{mangaData.english_name}}"
           </v-toolbar-title>
         </v-toolbar>
         <v-card-text class="text-center">

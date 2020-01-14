@@ -61,16 +61,20 @@
                   type="password"
                   required
                 />
+                <div  class="text-right">
+                  <nuxt-link :to="'/restore/'">Forgot password?</nuxt-link>
+                </div>
               </v-form>
             </v-card-text>
             <v-card-actions class="mx-4">
-              <v-btn :to="'/reg/'" color="primary">
+              <v-btn :to="'/reg/'" color="primary" class="mb-5">
                 <v-icon left>mdi-account-plus</v-icon>
                 Create account
               </v-btn>
               <v-spacer/>
               <v-btn
                 :disabled="!valid"
+                class="mb-5"
                 :loading="onAction"
                 @click="submit"
                 color="success"
