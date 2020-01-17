@@ -135,6 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 AUTH_USER_MODEL = 'custom_user.User'
 SITE = 1
+SITE_NAME = 'manga-exchange.ru'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_HOST_USER = 'reply@manga-exchange.ru'
