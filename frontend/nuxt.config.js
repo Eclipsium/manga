@@ -4,7 +4,7 @@ export default {
   mode: 'universal',
   server: {
     port: 3000, // default: 3000
-    host: 'manga-exchange.ru'  //  host: 'localhost'
+    host: 'http://manga-exchange.ru'  //  host: 'localhost'
   },
   /*
   ** Headers of the page
