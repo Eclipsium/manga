@@ -56,87 +56,89 @@
       <v-col
         cols="12"
         md="6">
-        <v-row v-if="mangaData.descriptions">
-          <p class="title">Description:</p>
-          <p>{{mangaData.descriptions}}</p>
-        </v-row>
-        <v-row v-if="mangaData.artists[0]">
-          <p class="title mr-4 align-center">Artists: </p>
-          <v-chip
-            color="primary"
-            class="ma-2 align-center"
-            v-for="artist in this.mangaData.artists[0].split(',')" :key="artist"
-            @click=toArtistPage(artist)
-            label
+        <v-container>
+          <v-row v-if="mangaData.descriptions">
+            <p class="title">Description:</p>
+            <p>{{mangaData.descriptions}}</p>
+          </v-row>
+          <v-row v-if="mangaData.artists[0]">
+            <p class="title mr-4 align-center">Artists: </p>
+            <v-chip
+              color="primary"
+              class="ma-2 align-center"
+              v-for="artist in this.mangaData.artists[0].split(',')" :key="artist"
+              @click=toArtistPage(artist)
+              label
+            >
+              {{artist}}
+            </v-chip>
+          </v-row>
+          <v-row>
+            <p class="title">List of parts:</p>
+          </v-row>
+          <v-data-table
+            :headers="headers"
+            :items="mangaVolumes"
+            max-height="350"
+            item-key="name"
+            class="elevation-1"
+            :sort-by="['volume']"
+            :sort-desc="[false]"
           >
-            {{artist}}
-          </v-chip>
-        </v-row>
-        <v-row>
-          <p class="title">List of parts:</p>
-        </v-row>
-        <v-data-table
-          :headers="headers"
-          :items="mangaVolumes"
-          max-height="350"
-          item-key="name"
-          class="elevation-1"
-          :sort-by="['volume']"
-          :sort-desc="[false]"
-        >
-          <template v-slot:item.user="{ item }">
-            <nuxt-link
-              :to="'/profile/'+ item.created_by + '/'"
-              :event="isDeleted(item) ? '' : 'click'"
-              :class="isDeleted(item) ? 'disabled': ''"
-            >
-              {{item.created_by}}
-            </nuxt-link>
-          </template>
-          <template v-slot:item.action="{ item }">
-            <v-btn
-              icon
-              v-if="item.image_count"
-              color="success"
-              @click="readMangaItem(item)"
-            >
-              <v-icon
+            <template v-slot:item.user="{ item }">
+              <nuxt-link
+                :to="'/profile/'+ item.created_by + '/'"
+                :event="isDeleted(item) ? '' : 'click'"
+                :class="isDeleted(item) ? 'disabled': ''"
               >
-                mdi-book-open-page-variant
-              </v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              v-if="!item.image_count"
-              color="warning"
-              loading
-            >
-            </v-btn>
-            <client-only>
+                {{item.created_by}}
+              </nuxt-link>
+            </template>
+            <template v-slot:item.action="{ item }">
               <v-btn
                 icon
-                v-if="$store.state.user.isAdmin"
-                color="error"
-                @click="deleteForm = true"
+                v-if="item.image_count"
+                color="success"
+                @click="readMangaItem(item)"
               >
-                <v-icon>
-                  mdi-delete
+                <v-icon
+                >
+                  mdi-book-open-page-variant
                 </v-icon>
               </v-btn>
+              <v-btn
+                icon
+                v-if="!item.image_count"
+                color="warning"
+                loading
+              >
+              </v-btn>
+              <client-only>
+                <v-btn
+                  icon
+                  v-if="$store.state.user.isAdmin"
+                  color="error"
+                  @click="deleteDialogOpen(item)"
+                >
+                  <v-icon>
+                    mdi-delete
+                  </v-icon>
+                </v-btn>
+              </client-only>
+            </template>
+          </v-data-table>
+          <div class='text-center mt-4'>
+            <client-only>
+              <v-btn
+                v-if="$store.state.user.isAuth"
+                color="primary"
+                :to="'upload/'"
+              >
+                Add manga volume
+              </v-btn>
             </client-only>
-          </template>
-        </v-data-table>
-        <div class='text-center mt-4'>
-          <client-only>
-            <v-btn
-              v-if="$store.state.user.isAuth"
-              color="primary"
-              :to="'upload/'"
-            >
-              Add manga volume
-            </v-btn>
-          </client-only>
-        </div>
+          </div>
+        </v-container>
       </v-col>
     </v-row>
     <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
@@ -207,8 +209,39 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="deleteMangaDialog">
+    <v-dialog
+      v-model="deleteMangaDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title
+          primary-title
+        >
+          Delete volume
+        </v-card-title>
+        <v-card-text>
+          Do you seriously want to delete volume {{this.volumeToDelete.volume}} for {{this.mangaData.english_name}}?
+        </v-card-text>
 
+        <v-divider/>
+        <v-card-actions>
+          <v-btn
+            color="success"
+            text
+            @click="deleteMangaDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-spacer/>
+          <v-btn
+            color="error"
+            text
+            @click="deleteManga(volumeToDelete)"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </v-container>
 </template>
@@ -247,13 +280,13 @@
     watch: {
       //Округляем индекс при прокрутке в 2х страничном режиме
       currentImageIndex() {
-        if (this.isHorizontal){
+        if (this.isHorizontal) {
           if (this.currentImageIndex > this.lastImageIndex) {
-            this.currentImageIndex  = Math.floor(this.currentImageIndex / 2) * 2 + 2;
+            this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2 + 2;
             this.lastImageIndex = this.currentImageIndex;
             return;
           }
-          if (this.currentImageIndex % 2 === 0 && this.currentImageIndex <= this.lastImageIndex){
+          if (this.currentImageIndex % 2 === 0 && this.currentImageIndex <= this.lastImageIndex) {
             this.lastImageIndex = this.currentImageIndex;
             return
           } else {
@@ -317,6 +350,10 @@
       })
     },
     methods: {
+      deleteDialogOpen(item){
+        this.volumeToDelete = item;
+        this.deleteMangaDialog = true
+      },
       //Method for switch carousel page with horizontal offset
       getPosition(index) {
         if (!this.isHorizontal) {
@@ -368,7 +405,8 @@
           .then(() => {
             this.mangaVolumes = this.mangaVolumes.filter(function (obj) {
               return obj.id !== item.id;
-            })
+            });
+            this.deleteMangaDialog = false
           }).catch((e) => {
           console.log(e)
         })
@@ -378,7 +416,6 @@
       },
       closeDialog() {
         this.readMangaDialog = false;
-        this.currentVolume = null;
         this.lastImageIndex = 0;
         this.currentImageIndex = 0;
       },
@@ -390,8 +427,8 @@
       recommend: false,
       readMangaDialog: false,
       deleteMangaDialog: false,
-      currentVolume: null,
       currentImageIndex: null,
+      volumeToDelete: {},
       tempRating: 0,
       digitRules: [
         v => !!v || 'Is required',

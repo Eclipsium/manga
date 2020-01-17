@@ -48,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
 
     objects = UserAccountManager()
 

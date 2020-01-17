@@ -73,7 +73,6 @@
             </v-slide-item>
             </v-row>
           </v-slide-group>
-        </client-only>
       </v-sheet>
       <v-card-actions align-content="center">
         <v-spacer/>
@@ -119,13 +118,13 @@
             case 'xs':
               return '150px';
             case 'sm':
-              return '250px';
+              return '150px';
             case 'md':
-              return '250px';
+              return '200px';
             case 'lg':
-              return '300px';
+              return '250px';
             case 'xl':
-              return '300px'
+              return '250px'
           }
         }
       },

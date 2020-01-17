@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.fields import ImageField
 
 from apps.manga_api.models import *
 

@@ -102,12 +102,12 @@
 </template>
 
 <script>
-  import {mapMutations, mapGetters} from 'vuex'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: "reg",
     layout: 'blank',
-    middleware: 'auth',
+    // middleware: 'auth',
     head() {
       return {
         title: 'Create account',
@@ -183,10 +183,12 @@
         onAction: 'status/getProcess',
         isAlert: 'status/getAlert'
       })
-    }
-    ,
+    },
     props: {
       source: String
+    },
+    mounted(){
+      this.$store.commit('status/clearAlert')
     }
   }
 </script>

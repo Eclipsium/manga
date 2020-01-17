@@ -167,7 +167,7 @@
 
   export default {
     name: "index",
-    middleware: 'notAuth',
+    // middleware: 'notAuth',
     head() {
       return {
         title: 'Add new manga',

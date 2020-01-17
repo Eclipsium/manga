@@ -1,10 +1,10 @@
 <template>
   <div>
-    <last-manga-component title="Last update volume" dataSource="getLastManga"/>
-    <last-manga-component title="Recommended manga" dataSource="getTopManga"/>
-    <client-only>
-      <first-time-guest v-if="firstTime"/>
-    </client-only>
+      <last-manga-component title="Last update volume" dataSource="getLastManga"/>
+      <last-manga-component title="Recommended manga" dataSource="getTopManga"/>
+      <client-only>
+        <first-time-guest v-if="firstTime"/>
+      </client-only>
   </div>
 </template>
 

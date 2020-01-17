@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, filters, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -21,7 +21,7 @@ class MangaViewSet(viewsets.ModelViewSet):
     serializer_class = MangaSerializer
     search_fields = ['japan_name', 'english_name']
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
-    permission_classes = [IsAdminUserOrReadOnly, ]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
     lookup_field = 'slug'
     ordering_fields = ['rating', 'is_promoted']
     filterset_class = PromoteAndArtistsFilter

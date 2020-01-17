@@ -42,6 +42,7 @@ urlpatterns = [
 
     path('volume/<int:pk>/images/', MangaImageListView.as_view()),
     path('volume/<int:pk>/delete/', MangaVolumeDeleteView.as_view()),
+    path('reset/confirm/<int:uid>/{token}', MangaVolumeDeleteView.as_view()),
 
     url(r'^', include(router.urls)),
     # path('manga/<slug>/', MangaDetailView.as_view()),

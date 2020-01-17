@@ -1,15 +1,10 @@
 import colors from 'vuetify/es5/util/colors'
 
-// TODO: изменить логику для работы с куками
-// TODO: изменить имя каталог на
-// TODO: изменить Add new part for "Test manga" Upload
-// TODO: изменить логику для работы с куками
-// TODO: изменить логику для работы с куками
 export default {
   mode: 'universal',
   server: {
     port: 3000, // default: 3000
-    host: 'localhost' // host: '92.63.105.56'
+    host: 'manga-exchange.ru'  //  host: 'localhost'
   },
   /*
   ** Headers of the page
@@ -47,8 +42,8 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    // ['@nuxtjs/axios', {host: '92.63.105.56', port: 80}],
-    ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
+    ['@nuxtjs/axios', {host: 'manga-exchange.ru', port: 80}],
+    // ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
     ['nuxt-vuex-localstorage', {
       localStorage: ['user'],  //  If not entered, “localStorage” is the default value
     }],

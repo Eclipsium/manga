@@ -185,9 +185,9 @@
       </v-app-bar>
     </client-only>
     <v-content>
-      <v-content>
-          <nuxt/>
-      </v-content>
+      <v-container fluid>
+        <nuxt/>
+      </v-container>
     </v-content>
     <footer-component/>
   </v-app>
@@ -236,7 +236,7 @@
           },
           {
             icon: 'mdi-chart-bubble',
-            title: 'Catalog',
+            title: 'All comics',
             to: '/manga/'
           },
         ],

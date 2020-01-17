@@ -62,7 +62,7 @@
                   required
                 />
                 <div  class="text-right">
-                  <nuxt-link :to="'/restore/'">Forgot password?</nuxt-link>
+                  <nuxt-link :to="'/restore/'" class="font-weight-bold">Forgot password?</nuxt-link>
                 </div>
               </v-form>
             </v-card-text>
@@ -121,7 +121,7 @@
   export default {
     name: "login",
     layout: 'blank',
-    middleware: 'auth',
+    // middleware: 'auth',
     head() {
       return {
         title: 'Login page',
