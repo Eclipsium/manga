@@ -1,165 +1,167 @@
 <template>
-  <v-card
-    class="overflow-hidden"
-  >
-    <v-toolbar
-      flat
-      color="primary"
+  <v-container>
+    <v-card
+      class="overflow-hidden"
     >
-      <v-icon left color="white">mdi-book-plus</v-icon>
-      <v-toolbar-title class="headline font-weight-regular white--text">
-        Add new Comic
-      </v-toolbar-title>
-    </v-toolbar>
-    <v-card-text class="text-center">
-      <v-container>
-        <v-form v-model="isValid">
-          <v-row>
-            <v-col cols="12" md="12">
-              <v-text-field
-                label="Title"
-                v-model="engName"
-                :rules="nameRules"
-                :disabled="isComplete"
-                outlined
-              />
-            </v-col>
-            <v-col cols="12" md="12">
-              <v-textarea
-                v-model="descriptions"
-                :disabled="isComplete"
-                outlined
-                label="Descriptions (optional)"
-              />
-            </v-col>
-          </v-row>
-          <v-row align="center">
-            <v-col cols="12" md="3">
-              <v-card
-                flat
-              >
-                <v-img
-                  :aspect-ratio="9/16"
-                  max-height="300"
-                  contain
-                  :src="imagePreview" v-if="showPreview"
+      <v-toolbar
+        flat
+        color="primary"
+      >
+        <v-icon left color="white">mdi-book-plus</v-icon>
+        <v-toolbar-title class="headline font-weight-regular white--text">
+          Add new Comic
+        </v-toolbar-title>
+      </v-toolbar>
+      <v-card-text class="text-center">
+        <v-container>
+          <v-form v-model="isValid">
+            <v-row>
+              <v-col cols="12" md="12">
+                <v-text-field
+                  label="Title"
+                  v-model="engName"
+                  :rules="nameRules"
+                  :disabled="isComplete"
+                  outlined
+                />
+              </v-col>
+              <v-col cols="12" md="12">
+                <v-textarea
+                  v-model="descriptions"
+                  :disabled="isComplete"
+                  outlined
+                  label="Descriptions (optional)"
+                />
+              </v-col>
+            </v-row>
+            <v-row align="center">
+              <v-col cols="12" md="3">
+                <v-card
+                  flat
                 >
-                </v-img>
-              </v-card>
-              <v-card
-                v-if="!showPreview"
-                onclick="document.getElementById('imageForm').click()"
-                flat
-                height="300"
-                color="grey lighten-3"
-                class="d-flex align-center justify-center clickable"
-              >
-                <v-icon notranslate style="font-size: 64px;">mdi-image</v-icon>
-                <v-subheader>Image preview</v-subheader>
-              </v-card>
-            </v-col>
-            <v-col cols="12" md="9">
-              <v-file-input
-                @change="handleFileUpload($event)"
-                :rules="imageRules"
-                :disabled="isComplete"
-                type="file"
-                ref="imageForm"
-                id="imageForm"
-                outlined
-                accept="image/png, image/jpeg, image/bmp"
-                placeholder="Pick manga poster"
-                prepend-icon="mdi-camera"
-                label="Manga poster"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="12">
-              <v-combobox
-                v-model="model"
-                :filter="filter"
-                :hide-no-data="!search"
-                :items="items"
-                :search-input.sync="search"
-                :disabled="isComplete"
-                :rules="artistsRules"
-                hide-selected
-                label="Artists"
-                multiple
-                outlined
-                small-chips
-                clearable
-              >
-                <template v-slot:no-data>
-                  <v-list-item>
-                    <span class="subheading">For create</span>
+                  <v-img
+                    :aspect-ratio="9/16"
+                    max-height="300"
+                    contain
+                    :src="imagePreview" v-if="showPreview"
+                  >
+                  </v-img>
+                </v-card>
+                <v-card
+                  v-if="!showPreview"
+                  onclick="document.getElementById('imageForm').click()"
+                  flat
+                  height="300"
+                  color="grey lighten-3"
+                  class="d-flex align-center justify-center clickable"
+                >
+                  <v-icon notranslate style="font-size: 64px;">mdi-image</v-icon>
+                  <v-subheader>Image preview</v-subheader>
+                </v-card>
+              </v-col>
+              <v-col cols="12" md="9">
+                <v-file-input
+                  @change="handleFileUpload($event)"
+                  :rules="imageRules"
+                  :disabled="isComplete"
+                  type="file"
+                  ref="imageForm"
+                  id="imageForm"
+                  outlined
+                  accept="image/png, image/jpeg, image/bmp"
+                  placeholder="Pick manga poster"
+                  prepend-icon="mdi-camera"
+                  label="Manga poster"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="12">
+                <v-combobox
+                  v-model="model"
+                  :filter="filter"
+                  :hide-no-data="!search"
+                  :items="items"
+                  :search-input.sync="search"
+                  :disabled="isComplete"
+                  :rules="artistsRules"
+                  hide-selected
+                  label="Artists"
+                  multiple
+                  outlined
+                  small-chips
+                  clearable
+                >
+                  <template v-slot:no-data>
+                    <v-list-item>
+                      <span class="subheading">For create</span>
+                      <v-chip
+                        :color="`${colors[nonce - 1]} lighten-3`"
+                        label
+                        small
+                      >
+                        {{ search }}
+                      </v-chip>
+                      <span>press Enter</span>
+                    </v-list-item>
+                  </template>
+                  <template v-slot:selection="{ attrs, item, parent, selected }">
                     <v-chip
-                      :color="`${colors[nonce - 1]} lighten-3`"
+                      v-if="item === Object(item)"
+                      v-bind="attrs"
+                      :color="`${item.color} lighten-3`"
+                      :input-value="selected"
                       label
                       small
                     >
-                      {{ search }}
-                    </v-chip>
-                    <span>press Enter</span>
-                  </v-list-item>
-                </template>
-                <template v-slot:selection="{ attrs, item, parent, selected }">
-                  <v-chip
-                    v-if="item === Object(item)"
-                    v-bind="attrs"
-                    :color="`${item.color} lighten-3`"
-                    :input-value="selected"
-                    label
-                    small
-                  >
                     <span class="pr-2">
                       {{ item.text }}
                     </span>
-                    <v-icon
-                      small
-                      @click="parent.selectItem(item)"
-                    >mdi-close
-                    </v-icon>
-                  </v-chip>
-                </template>
-              </v-combobox>
-            </v-col>
-          </v-row>
-        </v-form>
+                      <v-icon
+                        small
+                        @click="parent.selectItem(item)"
+                      >mdi-close
+                      </v-icon>
+                    </v-chip>
+                  </template>
+                </v-combobox>
+              </v-col>
+            </v-row>
+          </v-form>
 
-        <v-btn
-          large
-          color="primary"
-          :disabled="!model.length > 0 || !isValid"
-          :loading="isLoading"
-          @click="submit"
-        >
-          <v-icon left>
-            mdi-book-plus
-          </v-icon>
-          Add
-        </v-btn>
-        <v-snackbar
-          v-model="isComplete"
-          :color="!mangaMessage ? 'success' : 'error'"
-          multi-line
-        >
-          <p class="text-center">
-            {{!mangaMessage ? 'Comic created!' : mangaMessage }}
-          </p>
           <v-btn
-            v-if="!mangaMessage"
-            color="success"
-            text
-            @click="toMangaPage()"
+            large
+            color="primary"
+            :disabled="!model.length > 0 || !isValid"
+            :loading="isLoading"
+            @click="submit"
           >
-            To manga page
+            <v-icon left>
+              mdi-book-plus
+            </v-icon>
+            Add
           </v-btn>
-        </v-snackbar>
-      </v-container>
-    </v-card-text>
-  </v-card>
+          <v-snackbar
+            v-model="isComplete"
+            :color="!mangaMessage ? 'success' : 'error'"
+            multi-line
+          >
+            <p class="text-center">
+              {{!mangaMessage ? 'Comic created!' : mangaMessage }}
+            </p>
+            <v-btn
+              v-if="!mangaMessage"
+              color="success"
+              text
+              @click="toMangaPage()"
+            >
+              To manga page
+            </v-btn>
+          </v-snackbar>
+        </v-container>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script>

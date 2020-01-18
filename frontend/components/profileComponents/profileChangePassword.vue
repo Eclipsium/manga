@@ -1,133 +1,138 @@
 <template>
-  <v-card
-    class="overflow-hidden"
-  >
-    <v-toolbar
-      flat
-      color="warning"
+  <div>
+
+    <v-card
+      class="overflow-hidden"
     >
-      <v-icon left color="white">mdi-lock-alert</v-icon>
-      <v-toolbar-title class="headline font-weight-regular white--text">
-        Setting password and account
-      </v-toolbar-title>
-    </v-toolbar>
-    <v-card-text class="text-center">
-      <v-btn
-        disabled
-        class="mr-2"
+      <v-toolbar
+        flat
         color="warning"
-        @click.stop="changePasswordDialog = true"
       >
-        Change password
-      </v-btn>
-      <v-dialog
-        v-model="changePasswordDialog"
-        max-width="600px"
+        <v-icon left color="white">mdi-lock-alert</v-icon>
+        <v-toolbar-title class="headline font-weight-regular white--text">
+          Account Setting
+        </v-toolbar-title>
+      </v-toolbar>
+      <v-card-actions>
+        <div class="mx-auto text-center">
+          <v-btn
+            class="mt-2"
+            disabled
+            color="warning"
+            @click.stop="changePasswordDialog = true"
+          >
+            Change password
+          </v-btn>
+          <v-btn
+            class="mt-2 ml-0"
+            disabled
+            color="error"
+            @click.stop="deleteProfileDialog = true"
+          >
+            Delete account
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+    <v-dialog
+      v-model="changePasswordDialog"
+      max-width="600px"
 
-      >
-        <v-card>
-          <v-card-title class="headline justify-center">Change password</v-card-title>
-          <v-card-text>
-            <v-form v-model="passwordValid">
-              <v-col cols="12" sm="6" class="text-center">
-                <v-text-field
-                  type="password"
-                  label="Old password"
-                  :rules="passwordRules"
-                  v-model="oldPassword"
-                  prepend-icon="mdi-lock-alert"
-                  required
-                >
-                </v-text-field>
+    >
+      <v-card>
+        <v-card-title class="headline justify-center">Change password</v-card-title>
+        <v-card-text>
+          <v-form v-model="passwordValid">
+            <v-col cols="12" sm="6" class="text-center">
+              <v-text-field
+                type="password"
+                label="Old password"
+                :rules="passwordRules"
+                v-model="oldPassword"
+                prepend-icon="mdi-lock-alert"
+                required
+              >
+              </v-text-field>
 
-                <v-text-field
-                  type="password"
-                  label="New password"
-                  :rules="passwordRules"
-                  v-model="newPassword"
-                  prepend-icon="mdi-key"
-                  required
-                >
-                </v-text-field>
+              <v-text-field
+                type="password"
+                label="New password"
+                :rules="passwordRules"
+                v-model="newPassword"
+                prepend-icon="mdi-key"
+                required
+              >
+              </v-text-field>
 
-                <v-text-field
-                  type="password"
-                  label="Repeat new password"
-                  :rules="[comparePassword]"
-                  v-model="newPasswordRepeat"
-                  prepend-icon="mdi-key"
-                  required
-                >
-                </v-text-field>
+              <v-text-field
+                type="password"
+                label="Repeat new password"
+                :rules="[comparePassword]"
+                v-model="newPasswordRepeat"
+                prepend-icon="mdi-key"
+                required
+              >
+              </v-text-field>
 
-              </v-col>
-            </v-form>
-          </v-card-text>
-          <v-card-actions class="pb-4">
-            <v-btn
-              class="ml-4"
-              color="error"
-              @click="changePasswordDialog = false"
-            >
-              cancel
-            </v-btn>
-            <v-spacer/>
-            <v-btn
-              class="mr-4"
-              color="success"
-              @click="changePasswordDialog = false"
-              :disabled="!passwordValid"
-            >
-              Change password
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-btn
-        disabled
-        class="ml-2"
-        color="error"
-        @click.stop="deleteProfileDialog = true"
-      >
-        Delete account
-      </v-btn>
-      <v-dialog
-        v-model="deleteProfileDialog"
-        max-width="600px"
-      >
-        <v-card>
-          <v-card-title class="headline justify-center">Delete account</v-card-title>
-          <v-card-text>
-            <v-col cols="12" sm="12">
-              <span class="subtitle">Вы действительно хотите</span>
-              <span class="error--text font-weight-bold text-uppercase">удалить</span>
-              <span>свой аккаунт? Все ваши файлы, закладки и настройки будут</span>
-              <span class="error--text font-weight-bold text-uppercase">полностью удалены</span>
-              <span>без возможности восстановления.</span>
-              <p>Удалить аккаунт?</p>
             </v-col>
-          </v-card-text>
-          <v-card-actions class="pb-4">
-            <v-btn
-              class="ml-4"
-              color="success"
-              @click="deleteProfileDialog = false"
-            >
-              cancel
-            </v-btn>
-            <v-spacer/>
-            <v-btn
-              class="mr-4"
-              color="error"
-              @click="deleteProfileDialog = false"
-            >
-              Delete
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-card-text>
-  </v-card>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pb-4">
+          <v-btn
+            class="ml-4"
+            color="error"
+            @click="changePasswordDialog = false"
+          >
+            cancel
+          </v-btn>
+          <v-spacer/>
+          <v-btn
+            class="mr-4"
+            color="success"
+            @click="changePasswordDialog = false"
+            :disabled="!passwordValid"
+          >
+            Change password
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="deleteProfileDialog"
+      max-width="600px"
+    >
+      <v-card>
+        <v-card-title class="headline justify-center">Delete account</v-card-title>
+        <v-card-text>
+          <v-col cols="12" sm="12">
+            <span class="subtitle">Вы действительно хотите</span>
+            <span class="error--text font-weight-bold text-uppercase">удалить</span>
+            <span>свой аккаунт? Все ваши файлы, закладки и настройки будут</span>
+            <span class="error--text font-weight-bold text-uppercase">полностью удалены</span>
+            <span>без возможности восстановления.</span>
+            <p>Удалить аккаунт?</p>
+          </v-col>
+        </v-card-text>
+        <v-card-actions class="pb-4">
+          <v-btn
+            class="ml-4"
+            color="success"
+            @click="deleteProfileDialog = false"
+          >
+            cancel
+          </v-btn>
+          <v-spacer/>
+          <v-btn
+            class="mr-4"
+            color="error"
+            @click="deleteProfileDialog = false"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>

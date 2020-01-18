@@ -75,6 +75,26 @@
                     type="text"
                     required
                   />
+                  <v-checkbox v-model="checkbox" :rules="checkboxRules">
+                    <template v-slot:label>
+                      <div>
+                        I have read and accept the
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <a
+                              target="_blank"
+                              href="http://manga-exchange.ru/license//"
+                              @click.stop
+                              v-on="on"
+                            >
+                              license agreement
+                            </a>
+                          </template>
+                          Opens in new window
+                        </v-tooltip>
+                      </div>
+                    </template>
+                  </v-checkbox>
                 </v-form>
               </v-card-text>
               <v-card-actions class="mx-4 ">
@@ -118,6 +138,7 @@
     },
     data: () => ({
       snackbar: true,
+      checkbox: false,
       valid: false,
       nickname: null,
       nameRules: [
@@ -135,6 +156,9 @@
         v => !!v || 'Email required!',
         v => /.+@.+\..+/.test(v) || 'Email is incorrect!'
       ],
+      checkboxRules: [
+        v => !!v || 'Need to accept a license agreement',
+      ]
     }),
     methods: {
       async submit() {

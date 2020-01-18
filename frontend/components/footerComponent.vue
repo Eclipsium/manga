@@ -7,7 +7,7 @@
       no-gutters
     >
       <v-btn
-        href="mailto:abiogenesis70ru@gmail.com"
+       :to="'/copyright/'"
         color="primary"
         text
         class="mt-2"

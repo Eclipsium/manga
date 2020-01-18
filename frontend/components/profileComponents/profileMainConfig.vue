@@ -7,7 +7,7 @@
       color="primary"
     >
       <v-icon left color="white">mdi-account</v-icon>
-      <v-toolbar-title class="headline font-weight-regular white--text">Настройки профиля
+      <v-toolbar-title class="headline font-weight-regular white--text">Profile settings
       </v-toolbar-title>
     </v-toolbar>
     <v-card-text>

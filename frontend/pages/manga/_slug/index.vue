@@ -304,6 +304,13 @@
           this.$axios.$post('/api/v1/votes/', payload);
           this.voted = true
         }
+      },
+      isHorizontal(){
+        if (this.currentImageIndex % 2 === 0){
+          this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2;
+        }else {
+          this.currentImageIndex = Math.ceil(this.currentImageIndex / 2) * 2;
+        }
       }
     },
     computed: {
@@ -350,7 +357,7 @@
       })
     },
     methods: {
-      deleteDialogOpen(item){
+      deleteDialogOpen(item) {
         this.volumeToDelete = item;
         this.deleteMangaDialog = true
       },

@@ -6,27 +6,10 @@
       temporary
       app
     >
-      <v-list>
-        <div class="ma-2 mb-0 pb-0">
-          <v-autocomplete
-            v-model="model"
-            :items="searchResults"
-            :loading="isLoading"
-            :search-input.sync="search"
-            color="primary"
-            item-text="text"
-            item-value="value"
-            append-icon="mdi-magnify"
-            label="Search"
-            return-object
-            hide-selected
-            clearable
-            outlined
-            dense
-            hide-no-data
-          >
-          </v-autocomplete>
-        </div>
+      <v-container>
+
+
+      <v-list dense class="pt-0">
         <client-only>
           <v-list-item
             :to="'/profile/'"
@@ -38,8 +21,6 @@
             <v-list-item-title>{{nickname}}</v-list-item-title>
           </v-list-item>
         </client-only>
-      </v-list>
-      <v-list dense class="pt-0">
         <v-list-item
           v-for="(item, i) in loginItems"
           :key="i"
@@ -85,6 +66,29 @@
           </v-list-item>
         </client-only>
       </v-list>
+      <v-list>
+        <div class="ma-2 mb-0 pb-0">
+          <v-autocomplete
+            v-model="model"
+            :items="searchResults"
+            :loading="isLoading"
+            :search-input.sync="search"
+            color="primary"
+            item-text="text"
+            item-value="value"
+            append-icon="mdi-magnify"
+            label="Search"
+            return-object
+            hide-selected
+            clearable
+            outlined
+            dense
+            hide-no-data
+          >
+          </v-autocomplete>
+        </div>
+      </v-list>
+      </v-container>
     </v-navigation-drawer>
     <client-only>
       <v-app-bar
@@ -218,12 +222,12 @@
           },
           {
             icon: 'mdi-chart-bubble',
-            title: 'All comics',
+            title: 'Search comic',
             to: '/manga/'
           },
           {
             icon: 'mdi-book-plus',
-            title: 'Add comics',
+            title: 'Upload comic',
             to: '/add/',
             color: 'success'
           }
@@ -236,7 +240,7 @@
           },
           {
             icon: 'mdi-chart-bubble',
-            title: 'All comics',
+            title: 'Search comic',
             to: '/manga/'
           },
         ],

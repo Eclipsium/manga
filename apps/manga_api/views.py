@@ -19,7 +19,7 @@ from .tasks import parse_task_data
 class MangaViewSet(viewsets.ModelViewSet):
     queryset = Manga.objects.filter()
     serializer_class = MangaSerializer
-    search_fields = ['japan_name', 'english_name']
+    search_fields = ['english_name', 'artists']
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     lookup_field = 'slug'
