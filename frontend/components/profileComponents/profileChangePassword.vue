@@ -17,9 +17,8 @@
         <div class="mx-auto text-center">
           <v-btn
             class="mt-2"
-            disabled
             color="warning"
-            @click.stop="changePasswordDialog = true"
+           :to="'/restore/'"
           >
             Change password
           </v-btn>

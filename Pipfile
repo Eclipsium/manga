@@ -22,6 +22,9 @@ pyunpack = "*"
 patool = "*"
 rarfile = "*"
 gunicorn = "*"
+redis = "*"
+sorl-thumbnail = {editable = true,git = "https://github.com/jazzband/sorl-thumbnail",ref = "master"}
+sorl-thumbnail-serializer-field = "*"
 
 [requires]
 python_version = "3.7"

@@ -48,12 +48,16 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
 
+    # Ресайз картинок
+    'sorl.thumbnail',
+
     # Переопределенная модель юзера
     'apps.custom_user.apps.CustomUserConfig',
 
     # Установленные приложения
     'apps.profile_api',
     'apps.rating_api',
+    'apps.comment_api',
     'apps.manga_api.apps.MangaApiConfig',
 
 ]
@@ -109,7 +113,6 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser'
     ),
     'DEFAULT_RENDERER_CLASSES': (
-        # 'rest_framework_json_api.renderers.JSONRenderer',
         'rest_framework.renderers.JSONRenderer',
         # 'rest_framework.renderers.BrowsableAPIRenderer',
     ),

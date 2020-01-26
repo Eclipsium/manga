@@ -9,10 +9,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.manga_api.models import Manga, MangaVolume, MangaArchive, MangaImage
-from apps.manga_api.permissions import IsAdminUserOrReadOnly
+from apps.manga_api.permissions import IsAdminUserOrReadOnly, IsOwnerOrAdminOrReadOnly
 from apps.manga_api.serializers import MangaSerializer, MangaHomePageSerializer, MangaListSerializer, \
-    MangaArchiveSerializer, MangaImageViewSerializer, MangaVolumeSerializer
+    MangaArchiveSerializer, MangaImageViewSerializer, MangaVolumeSerializer, ImageGetViewSerializer, \
+    ImagePostViewSerializer
 from .filters import PromoteAndArtistsFilter
+from .paginations import StandardResultsSetPagination
 from .tasks import parse_task_data
 
 
@@ -164,3 +166,27 @@ class MangaImageListView(generics.ListAPIView):
     def get_queryset(self):
         volume_pk = self.kwargs['pk']
         return MangaImage.objects.filter(volume=volume_pk).order_by('-sort_index')
+
+
+class MangaImageEditView(generics.ListAPIView):
+    serializer_class = ImageGetViewSerializer
+    permission_classes = [AllowAny, ]
+
+    def get_queryset(self):
+        volume_pk = self.kwargs['pk']
+        return MangaImage.objects.filter(volume=volume_pk).order_by('sort_index')
+
+
+class MangaImageViewSet(viewsets.ModelViewSet):
+    serializer_class = ImageGetViewSerializer
+    permission_classes = (IsOwnerOrAdminOrReadOnly, )
+    pagination_class = StandardResultsSetPagination
+    queryset = MangaImage.objects.all().order_by('-id')
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ImageGetViewSerializer
+        else:
+            return ImagePostViewSerializer
+
+

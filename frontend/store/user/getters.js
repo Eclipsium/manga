@@ -22,5 +22,8 @@ export default {
   },
   getIsAuth(state){
     return state.isAuth
+  },
+  getIsAdmin(state){
+    return state.isAdmin
   }
 };

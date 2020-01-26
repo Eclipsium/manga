@@ -15,9 +15,6 @@
 
             </client-only>
           </p>
-          <p class="subtitle" v-if="mangaData.japan_name">
-            {{mangaData.japan_name}}
-          </p>
         </v-row>
         <v-row class="justify-center">
           <v-img
@@ -94,26 +91,63 @@
                 {{item.created_by}}
               </nuxt-link>
             </template>
+            <template
+              v-slot:item.image_count="{item}"
+            >
+              <v-tooltip bottom v-if="item.image_count % 2 === 1">
+                <template v-slot:activator="{ on }">
+                  <div
+                    class="orange--text font-weight-bold"
+                    v-on="on"
+                  >
+                    {{item.image_count}}
+                  </div>
+                </template>
+                <span>
+                  Odd number of pages. You may need to edit
+                </span>
+              </v-tooltip>
+              <div class="green--text font-weight-bold"
+                   v-if="item.image_count % 2 === 0 && item.image_count">
+                {{item.image_count}}
+              </div>
+              <div
+                v-if="!item.image_count">
+                loading...
+              </div>
+            </template>
             <template v-slot:item.action="{ item }">
-              <v-btn
-                icon
-                v-if="item.image_count"
-                color="success"
-                @click="readMangaItem(item)"
-              >
-                <v-icon
-                >
-                  mdi-book-open-page-variant
-                </v-icon>
-              </v-btn>
-              <v-btn
-                icon
-                v-if="!item.image_count"
-                color="warning"
-                loading
-              >
-              </v-btn>
               <client-only>
+                <v-btn
+                  icon
+                  v-if="item.image_count"
+                  color="success"
+                  @click="readMangaItem(item)"
+                >
+                  <v-icon
+                  >
+                    mdi-book-open-page-variant
+                  </v-icon>
+                </v-btn>
+                <v-btn
+                  icon
+                  v-if="!item.image_count"
+                  color="warning"
+                  loading
+                >
+                </v-btn>
+
+                <v-btn
+                  icon
+                  v-if="item.image_count > 0 && (item.created_by === nickname || $store.state.user.isAdmin)"
+                  color="warning"
+                  :to="'/edit/'+ mangaData.slug + '/' + item.id + '/'"
+                >
+                  <v-icon>
+                    mdi-content-save-edit
+                  </v-icon>
+                </v-btn>
+
                 <v-btn
                   icon
                   v-if="$store.state.user.isAdmin"
@@ -141,6 +175,11 @@
         </v-container>
       </v-col>
     </v-row>
+    <client-only>
+      <v-row class="justify-center">
+        <comment-component :mangaData="this.mangaData" :mangaComments="this.mangaComments"></comment-component>
+      </v-row>
+    </client-only>
     <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
       <v-card>
         <v-toolbar dark dense flat>
@@ -151,13 +190,16 @@
           </v-btn>
         </v-toolbar>
         <v-card-text height="100%">
+
           <v-carousel
+            v-if="volumeImages"
             hide-delimiters
             :show-arrows="true"
             :continuous="false"
             :next-icon="hasPrevArrow? 'mdi-chevron-right': false"
             height="100%"
             v-model="currentImageIndex"
+            @change="changeCurrentImage"
           >
             <v-carousel-item
               v-for="(item, index) in volumeImages"
@@ -248,19 +290,25 @@
 
 <script>
   import {mapGetters} from 'vuex'
+  import commentComponent from '~/components/commentComponent'
 
   export default {
     name: "index",
+    components: {
+      commentComponent
+    },
     async asyncData({$axios, params, error}) {
       try {
         const mangaData = await $axios.$get('/api/v1/manga/' + params.slug + "/");
         const mangaVolumes = await $axios.$get('/api/v1/manga/' + params.slug + '/volumes/');
         const votes = await $axios.$get('/api/v1/votes/?manga__slug=' + params.slug);
-        return {mangaData, mangaVolumes, votes}
+        const mangaComments = await $axios.$get('/api/v1/comments/?manga=' + mangaData.id);
+        return {mangaData, mangaVolumes, votes, mangaComments}
       } catch (e) {
-        error({
-          statusCode: 404
-        })
+        console.log(e)
+        // error({
+        //   statusCode: 404
+        // })
       }
     },
     head() {
@@ -278,22 +326,6 @@
       this.recommend = this.mangaData.is_promoted;
     },
     watch: {
-      //Округляем индекс при прокрутке в 2х страничном режиме
-      currentImageIndex() {
-        if (this.isHorizontal) {
-          if (this.currentImageIndex > this.lastImageIndex) {
-            this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2 + 2;
-            this.lastImageIndex = this.currentImageIndex;
-            return;
-          }
-          if (this.currentImageIndex % 2 === 0 && this.currentImageIndex <= this.lastImageIndex) {
-            this.lastImageIndex = this.currentImageIndex;
-            return
-          } else {
-            this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2;
-          }
-        }
-      },
       //Update rating value
       tempRating() {
         let payload = {
@@ -305,11 +337,15 @@
           this.voted = true
         }
       },
-      isHorizontal(){
-        if (this.currentImageIndex % 2 === 0){
-          this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2;
-        }else {
+      isHorizontal() {
+        if (this.isEven) {
+          if (this.volumeImages.length > this.currentImageIndex) {
+            this.currentImageIndex = Math.floor(this.currentImageIndex / 2) * 2 + 1;
+            this.lastImageIndex = this.currentImageIndex
+          }
+        } else if (this.volumeImages.length > this.currentImageIndex) {
           this.currentImageIndex = Math.ceil(this.currentImageIndex / 2) * 2;
+          this.lastImageIndex = this.currentImageIndex
         }
       }
     },
@@ -346,17 +382,37 @@
       },
       //Корректное отображение стрелки вперед
       hasPrevArrow() {
-        if (this.isHorizontal && this.volumeImages.length - this.currentImageIndex > 2) {
-          return true
-        } else return !this.isHorizontal && this.volumeImages.length - this.currentImageIndex >= 0;
+        if (!this.isHorizontal) {
+          return (this.volumeImages.length - this.currentImageIndex) > 1
+        } else {
+          return this.volumeImages.length - this.currentImageIndex > 2;
+        }
       },
-      ...mapGetters({
-        token: 'user/getUserToken',
-        nickname: 'user/getUserNickName',
-        volumeImages: 'image/getVolumeImage'
-      })
+      isEven() {
+        return this.volumeImages.length % 2 === 0;
+      },
+      ...
+        mapGetters({
+          token: 'user/getUserToken',
+          nickname: 'user/getUserNickName',
+          volumeImages: 'image/getVolumeImage'
+        })
     },
     methods: {
+      //Изменяем индекс при прокрутке в 2х страничном режиме
+      changeCurrentImage() {
+        if (this.isHorizontal) {
+          //Если листаем вперед
+          if (this.currentImageIndex > this.lastImageIndex) {
+            this.currentImageIndex += 1;
+            this.lastImageIndex = this.currentImageIndex;
+          }
+          if (this.currentImageIndex < this.lastImageIndex) {
+            this.currentImageIndex -= 1;
+            this.lastImageIndex = this.currentImageIndex;
+          }
+        }
+      },
       deleteDialogOpen(item) {
         this.volumeToDelete = item;
         this.deleteMangaDialog = true
@@ -365,10 +421,14 @@
       getPosition(index) {
         if (!this.isHorizontal) {
           return 'center center'
-        } else if (index % 2 === 0) {
-          return 'left center'
-        } else if (index % 2 === 1) {
-          return 'right center'
+        } else if (!this.isEven) {
+          if (index % 2 === 0) {
+            return 'left center'
+          } else return 'right center'
+        } else {
+          if (index % 2 === 0) {
+            return 'right center'
+          } else return 'left center'
         }
       },
       isDeleted(item) {
@@ -382,6 +442,7 @@
         if (this.isHorizontal) {
           if (this.currentImageIndex - this.volumeImages.length < 2) {
             this.currentImageIndex -= 2;
+            this.lastImageIndex = this.currentImageIndex
           } else {
             this.closeDialog()
           }
@@ -426,10 +487,10 @@
         this.lastImageIndex = 0;
         this.currentImageIndex = 0;
       },
-    }
-    ,
+    },
     data: () => ({
       voted: false,
+      isBlocked: false,
       lastImageIndex: null,
       recommend: false,
       readMangaDialog: false,

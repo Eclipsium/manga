@@ -5,12 +5,12 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from pytils.translit import slugify
 
 from apps.manga_api.validators import validate_file_size_and_ext
+from util import models
 
 User = get_user_model()
 
@@ -56,7 +56,7 @@ def get_manga_image_path(instance, filename):
 
 
 def get_sentinel_user():
-    return get_user_model().objects.get_or_create(email='deleted', nickname='deleted')[0]
+    return get_user_model().objects.get_or_create(nickname='deleted')[0]
 
 
 class Manga(models.Model):

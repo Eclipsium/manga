@@ -4,6 +4,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import routers, permissions
 
+from apps.comment_api.views import CommentViewSet
 from apps.manga_api.views import *
 from apps.rating_api.views import VoteViewSet
 
@@ -22,6 +23,8 @@ schema_view = get_schema_view(
 router = routers.DefaultRouter()
 router.register('manga', MangaViewSet)
 router.register('votes', VoteViewSet)
+router.register('images', MangaImageViewSet)
+router.register('comments', CommentViewSet)
 # router.register('person', MangaPersonViewSet)
 
 urlpatterns = [
@@ -41,7 +44,10 @@ urlpatterns = [
     path('artist/<slug:slug>/', MangaSearchArtistView.as_view()),
 
     path('volume/<int:pk>/images/', MangaImageListView.as_view()),
+    path('volume/<int:pk>/images/edit/', MangaImageEditView.as_view()),
     path('volume/<int:pk>/delete/', MangaVolumeDeleteView.as_view()),
+
+
     path('reset/confirm/<int:uid>/{token}', MangaVolumeDeleteView.as_view()),
 
     url(r'^', include(router.urls)),

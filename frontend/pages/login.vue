@@ -4,7 +4,6 @@
       class="fill-height"
       fluid
     >
-    >
       <v-snackbar
         v-if="isAlert"
         v-model="snackbar"
