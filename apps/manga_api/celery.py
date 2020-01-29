@@ -5,13 +5,13 @@ from celery import Celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'manga.settings')
 os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
 
-app = Celery('manga_api',
-             broker='amqp://manga:mangapassword@localhost:5672/mangahost',
-             )
-
 # app = Celery('manga_api',
-#              broker='redis://localhost:6379/0',
+#              broker='amqp://manga:mangapassword@localhost:5672/mangahost',
 #              )
+
+app = Celery('manga_api',
+             broker='redis://localhost:6379/0',
+             )
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.

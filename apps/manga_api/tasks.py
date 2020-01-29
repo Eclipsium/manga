@@ -2,15 +2,12 @@ import glob
 import os
 import shutil
 
-import requests
 from celery.utils.log import get_task_logger
 from django.core.files import File
 from pyunpack import Archive, PatoolError
 
 from apps.manga_api.celery import app as celery_app
 from apps.manga_api.models import MangaArchive, MangaImage, MangaVolume
-
-from django.conf import settings
 
 logger = get_task_logger(__name__)
 
