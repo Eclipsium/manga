@@ -8,6 +8,8 @@ celery worker -A apps.manga_api --loglevel=info --concurrency=1
 
 ###RESTART REDIS
 sudo systemctl restart redis.service
+sudo systemctl restart manga.service
+
 
 
 sudo apt-get install postgresql
