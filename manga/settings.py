@@ -29,10 +29,6 @@ SECRET_KEY = '61dm6v074@bh5*svkolr9d$6&_c-q$11=wgo9-d1^)c18&6!=6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-
-# ALLOWED_HOSTS = ['manga-exchange.ru', 'www.manga-exchange.ru', '92.63.105.56', 'www.92.63.105.56']
-ALLOWED_HOSTS = []
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -172,29 +168,6 @@ WSGI_APPLICATION = 'manga.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        # #windows
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'manga_db',
-        'USER': 'manga_admin',
-        'PASSWORD': 'mangareader',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-
-        # ubuntu
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'manga_db',
-        # 'USER': 'manga',
-        # 'PASSWORD': 'manga_password11',
-        # 'HOST': '127.0.0.1',
-        # 'PORT': '5432',
-
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
