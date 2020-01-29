@@ -148,7 +148,7 @@
           return
         }
         try {
-          const data = await this.$axios.$put('/api/v1/auth/users/' + this.id + '/',
+          const data = await this.$axios.$patch('/api/v1/auth/users/' + this.id + '/',
             {
               nickname: this.nickNameForChange,
               email: this.emailForChange,

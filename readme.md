@@ -1,10 +1,15 @@
 ## Manga exchage project
+
 developer - abiogenesis70ru@gmail.com
+
 ######Stack:
+
 #####Backend - Django Rest framework https://www.django-rest-framework.org/
+
 #####Frontend - Nuxt.js & vuetify.js https://nuxtjs.org https://vuetifyjs.com
 
 ##Server config
+
 #####Nginx, Node.js, Gunicorn, celery, redis
 
 ##API endpoints
