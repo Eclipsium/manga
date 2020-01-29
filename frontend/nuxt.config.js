@@ -23,7 +23,7 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: {color: '#fff'},
+  loading: {color: '#34c3eb'},
   /*
   ** Global CSS
   */
@@ -43,8 +43,8 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    ['@nuxtjs/axios', { host: '92.63.105.56', port: 80}],
-    // ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
+    // ['@nuxtjs/axios', { host: '92.63.105.56', port: 80}],
+    ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
     ['nuxt-vuex-localstorage', {
       localStorage: ['user'],  //  If not entered, “localStorage” is the default value
     }],

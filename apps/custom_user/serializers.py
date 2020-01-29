@@ -7,12 +7,12 @@ User = get_user_model()
 
 
 class UserMeSerializer(serializers.ModelSerializer):
-    is_superuser = serializers.ReadOnlyField()
+    is_staff = serializers.ReadOnlyField()
     avatar = HyperlinkedSorlImageField('100')
 
     class Meta:
         model = User
-        fields = ("id", "email", "nickname", "avatar", 'is_superuser')
+        fields = ("id", "email", "nickname", "avatar", 'is_staff')
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

@@ -103,7 +103,6 @@
         const mangaData = await $axios.$get('/api/v1/manga/' + params.slug + "/");
         return {mangaData}
       } catch (e) {
-        console.log(e)
       }
     },
     data() {
@@ -160,7 +159,6 @@
             'type': 'error',
             'message': res.response.data[0]
           };
-          console.log(res);
           store.commit('status/setAlert', payload);
           this.archive = null
         })

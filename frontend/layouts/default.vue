@@ -253,7 +253,6 @@
     methods: {
       logout() {
         this.$store.dispatch('user/LOGOUT');
-        this.$router.push('/')
       }
     },
     watch: {

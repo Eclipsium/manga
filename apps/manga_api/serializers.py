@@ -9,7 +9,7 @@ class MangaSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault(),
     )
     poster = HyperlinkedSorlImageField('720')
-    
+
     class Meta:
         model = Manga
         fields = [
@@ -22,7 +22,6 @@ class MangaHomePageSerializer(serializers.ModelSerializer):
     """
     Сериализатор для главной страницы
     """
-    poster = HyperlinkedSorlImageField('720')
 
     # def get_foo(self, obj):
 
@@ -55,7 +54,6 @@ class MangaImageViewSerializer(serializers.ModelSerializer):
     """
     Serializer for manga image view page
     """
-    image = HyperlinkedSorlImageField('720')
 
     class Meta:
         model = MangaImage

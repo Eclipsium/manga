@@ -62,10 +62,6 @@ def parse_data_from_archive(archive_id, manga_volume):
 
         for file in opened_file:
             file.close()
-    if settings.DEBUG:
-        requests.get('http://localhost:8000/api/v1/images/')  # Create cache
-    else:
-        requests.get('http://manga-exchange/api/v1/images/')  # Create cache
 
     shutil.rmtree(temp_path)
     instance.delete()

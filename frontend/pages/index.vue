@@ -12,7 +12,6 @@
   import {mapGetters} from 'vuex'
 
   import lastMangaComponent from "../components/lastMangaComponent";
-  import promotedMangaList from "../components/promotedMangaList";
   import firstTimeGuest from "../components/firstTimeGuest";
 
   export default {
@@ -32,7 +31,6 @@
     },
     components: {
       lastMangaComponent,
-      promotedMangaList,
       firstTimeGuest
     },
     data: () => ({}),

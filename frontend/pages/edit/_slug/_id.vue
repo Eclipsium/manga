@@ -125,10 +125,9 @@
         const mangaData = await $axios.$get('/api/v1/manga/' + params.slug + "/");
         return {images, mangaData}
       } catch (e) {
-        console.log(e)
-        // error({
-        //   statusCode: 404
-        // })
+        error({
+          statusCode: 404
+        })
       }
     },
     computed: {

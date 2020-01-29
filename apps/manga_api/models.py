@@ -5,9 +5,12 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
+from django.core.files.base import ContentFile
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from pytils.translit import slugify
+
+from sorl.thumbnail import get_thumbnail
 
 from apps.manga_api.validators import validate_file_size_and_ext
 from util import models
@@ -105,6 +108,18 @@ class MangaImage(models.Model):
     class Meta:
         verbose_name = 'Image'
         verbose_name_plural = 'Images'
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Have to save the image (and imagefield) first
+            super(MangaImage, self).save(*args, **kwargs)
+            # obj is being created for the first time - resize
+
+            resized = get_thumbnail(self.image, '720')
+            # Manually reassign the resized image to the image field
+            self.image.save(resized.name, ContentFile(resized.read()), True)
+
+        super(MangaImage, self).save(*args, **kwargs)
 
     def __str__(self):
         return str(self.volume.manga.english_name) + ': Volume - ' + str(self.volume.volume) + ' image ' + str(

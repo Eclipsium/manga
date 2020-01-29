@@ -7,7 +7,7 @@
         v-if="mangaComments.count"
       >
         <v-card
-          min-width="700"
+          width="700"
           v-for="item in reversedComments.slice((page-1)*10, page*10)"
           :key="item.id"
         >
@@ -57,7 +57,7 @@
         :length="Math.ceil(this.mangaComments.count / 10)"
       ></v-pagination>
     </div>
-    <v-container>
+    <v-container  v-if="$store.state.user.isAuth">
       <v-form
         v-model="isValid"
         ref="form"
@@ -82,6 +82,14 @@
         </v-btn>
       </div>
     </v-container>
+    <v-container v-if="!$store.state.user.isAuth">
+      <v-subheader>For leave comment you need login
+        <v-spacer></v-spacer>
+        <v-btn :to="'/login/'" color="success">
+        login
+      </v-btn>
+      </v-subheader>
+    </v-container>
 
   </div>
 </template>
@@ -101,6 +109,7 @@
         commentRules: [
           v => !!v || 'Is required!',
           v => (v && v.length > 5) || 'Field must be more then 5 characters.',
+          v => (v && v.length < 399) || 'Field must be less then 400 characters.',
         ],
       }
     },

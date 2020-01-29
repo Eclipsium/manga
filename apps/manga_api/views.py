@@ -66,8 +66,9 @@ class MangaLastAddView(APIView):
 
 
 class MangaVolumeDeleteView(generics.DestroyAPIView):
-    permission_classes = [IsAdminUserOrReadOnly,]
+    permission_classes = [IsAdminUserOrReadOnly, ]
     serializer_class = MangaVolumeSerializer
+    queryset = MangaVolume.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         volume_pk = kwargs['pk']
@@ -179,7 +180,7 @@ class MangaImageEditView(generics.ListAPIView):
 
 class MangaImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageGetViewSerializer
-    permission_classes = (IsOwnerOrAdminOrReadOnly, )
+    permission_classes = (IsOwnerOrAdminOrReadOnly,)
     pagination_class = StandardResultsSetPagination
     queryset = MangaImage.objects.all().order_by('-id')
 
@@ -188,5 +189,3 @@ class MangaImageViewSet(viewsets.ModelViewSet):
             return ImageGetViewSerializer
         else:
             return ImagePostViewSerializer
-
-

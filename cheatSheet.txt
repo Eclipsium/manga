@@ -1,4 +1,4 @@
-CELERY COMMAND
+###CELERY COMMAND
 
 rabbitmqctl add_user manga mangapassword
 rabbitmqctl add_vhost mangahost
@@ -6,6 +6,7 @@ rabbitmqctl set_permissions -p mangahost manga ".*" ".*" ".
 
 celery worker -A apps.manga_api --loglevel=info --concurrency=1
 
+###RESTART REDIS
 sudo systemctl restart redis.service
 
 
@@ -19,7 +20,7 @@ sudo rabbitmqctl add_vhost mangahost
 sudo rabbitmqctl set_permissions -p mangahost manga ".*" ".*" ".*"
 
 
-###Постгресс инициализация###
+###POSTGRES DB
 
 sudo -u postgres psql postgres
 \password postgres
@@ -34,7 +35,7 @@ sudo service postgresql stop
 \q
 
 
-###Настройка сервера###
+###Unix command###
 adduser manga
 
 sudo apt-get install nginx
@@ -44,8 +45,13 @@ nginx -s reload
 sudo vim default
 sudo touch .env
 sudo npm install pm2 -g
+
+###Run nodejs web server
 pm2 start npm -- start
 
 gunicorn --daemon -b 92.63.105.56:8000 manga.wsgi:application
 
 ps axu | grep gunicorn
+
+#Clear cache data
+python manage.py thumbnail cleanup

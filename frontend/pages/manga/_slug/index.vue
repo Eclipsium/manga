@@ -20,8 +20,8 @@
           <v-img
             :aspect-ratio="9/16"
             :src="mangaData.poster"
-            max-height="500"
-            max-width="300"
+            max-height="500px"
+            max-width="300px"
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.9)"
           />
         </v-row>
@@ -76,7 +76,7 @@
           <v-data-table
             :headers="headers"
             :items="mangaVolumes"
-            max-height="350"
+            max-height="350px"
             item-key="name"
             class="elevation-1"
             :sort-by="['volume']"
@@ -150,7 +150,7 @@
 
                 <v-btn
                   icon
-                  v-if="$store.state.user.isAdmin"
+                  v-if="$store.state.user.isAdmin || item.created_by === nickname"
                   color="error"
                   @click="deleteDialogOpen(item)"
                 >
@@ -177,11 +177,11 @@
     </v-row>
     <client-only>
       <v-row class="justify-center">
-        <comment-component :mangaData="this.mangaData" :mangaComments="this.mangaComments"></comment-component>
+        <comment-component :mangaData="mangaData" :mangaComments="mangaComments"></comment-component>
       </v-row>
     </client-only>
     <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
-      <v-card>
+      <v-card :max-width="$vuetify.breakpoint.width" :max-height="$vuetify.breakpoint.height">
         <v-toolbar dark dense flat>
           <v-toolbar-title>{{mangaData.english_name}}</v-toolbar-title>
           <v-spacer/>
@@ -189,8 +189,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-text height="100%">
-
+        <v-card-text>
           <v-carousel
             v-if="volumeImages"
             hide-delimiters
@@ -305,10 +304,9 @@
         const mangaComments = await $axios.$get('/api/v1/comments/?manga=' + mangaData.id);
         return {mangaData, mangaVolumes, votes, mangaComments}
       } catch (e) {
-        console.log(e)
-        // error({
-        //   statusCode: 404
-        // })
+        error({
+          statusCode: 404
+        })
       }
     },
     head() {
@@ -347,6 +345,13 @@
           this.currentImageIndex = Math.ceil(this.currentImageIndex / 2) * 2;
           this.lastImageIndex = this.currentImageIndex
         }
+      },
+      readMangaDialog(){
+        if(this.readMangaDialog === false){
+          this.lastImageIndex = 0;
+          this.currentImageIndex = 0;
+        }
+
       }
     },
     computed: {
@@ -370,12 +375,12 @@
             case 'md':
               return '500px';
             case 'lg':
-              return '700px';
+              return '600px';
             case 'xl':
-              return '800px'
+              return '700px'
           }
         }
-        return '700px'
+        return '600px'
       },
       isHorizontal() {
         return this.$vuetify.breakpoint.width > this.$vuetify.breakpoint.height
@@ -462,8 +467,8 @@
           return ''
         }
       },
-      readMangaItem(item) {
-        this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
+      async readMangaItem(item) {
+        await this.$store.dispatch('image/LOAD_VOLUME_IMAGE', item.id);
         this.currentImageIndex = item.image_count - 1;
         this.lastImageIndex = item.image_count - 1;
         this.readMangaDialog = true
@@ -476,16 +481,15 @@
             });
             this.deleteMangaDialog = false
           }).catch((e) => {
-          console.log(e)
         })
       },
       toArtistPage(artist) {
         this.$router.push('/artist/' + artist + '/')
       },
       closeDialog() {
-        this.readMangaDialog = false;
         this.lastImageIndex = 0;
         this.currentImageIndex = 0;
+        this.readMangaDialog = false;
       },
     },
     data: () => ({
