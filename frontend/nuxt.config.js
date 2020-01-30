@@ -2,15 +2,15 @@ import colors from 'vuetify/es5/util/colors'
 
 const axios = require('axios');
 
-const axiosConfUrl = 'http://localhost:8000';
-// const axiosConfUrl = 'http://manga-exchange.ru';
+// const axiosConfUrl = 'http://localhost:8000';
+const axiosConfUrl = 'http://manga-exchange.ru';
 
 
 export default {
   mode: 'universal',
   server: {
-    host: 'localhost',
-    // host: '92.63.105.56',
+    // host: 'localhost',
+    host: '92.63.105.56',
     port: 3000,
   },
   /*
@@ -52,8 +52,8 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    // ['@nuxtjs/axios', { host: '92.63.105.56', port: 80}],
-    ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
+    ['@nuxtjs/axios', { host: '92.63.105.56', port: 80}],
+    // ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
     ['nuxt-vuex-localstorage', {
       localStorage: ['user'],  //  If not entered, “localStorage” is the default value
     }],
