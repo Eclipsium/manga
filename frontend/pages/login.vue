@@ -2,114 +2,116 @@
   <v-app>
     <v-container
       class="fill-height"
-      fluid
     >
-      <v-snackbar
-        v-if="isAlert"
-        v-model="snackbar"
-        :color="isAlert.type"
-        :timeout="0"
-      >
-        {{ isAlert.message }}
-      </v-snackbar>
-      <v-row
-        align="center"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          lg="4"
-          md="6"
-          sm="8"
-          xs="12"
+      <v-container>
+
+        <v-snackbar
+          v-if="isAlert"
+          v-model="snackbar"
+          :color="isAlert.type"
+          :timeout="0"
         >
-          <v-card class="elevation-12">
-            <v-toolbar
-              color="primary"
-              dark
-              flat
-            >
-              <v-toolbar-title>
-                Login
-              </v-toolbar-title>
-              <v-spacer/>
-              <v-btn icon :to="'/'">
-                <v-icon>
-                  mdi-home
-                </v-icon>
-              </v-btn>
-            </v-toolbar>
-            <v-card-text>
-              <v-form
-                ref="form"
-                v-model="valid">
-                <v-text-field
-                  label="Email"
-                  v-model="email"
-                  :rules="emailRules"
-                  prepend-icon="mdi-email"
-                  type="text"
-                  required
-                />
-
-                <v-text-field
-                  v-model="password"
-                  :rules="passwordRules"
-                  label="Password"
-                  prepend-icon="mdi-lock"
-                  type="password"
-                  required
-                />
-                <div  class="text-right">
-                  <nuxt-link :to="'/restore/'" class="font-weight-bold">Forgot password?</nuxt-link>
-                </div>
-              </v-form>
-            </v-card-text>
-            <v-card-actions class="mx-4">
-              <v-btn :to="'/reg/'" color="primary" class="mb-5">
-                <v-icon left>mdi-account-plus</v-icon>
-                Create account
-              </v-btn>
-              <v-spacer/>
-              <v-btn
-                :disabled="!valid"
-                class="mb-5"
-                :loading="onAction"
-                @click="submit"
-                color="success"
+          {{ isAlert.message }}
+        </v-snackbar>
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <v-col
+            cols="12"
+            lg="4"
+            md="6"
+            sm="8"
+            xs="12"
+          >
+            <v-card class="elevation-12">
+              <v-toolbar
+                color="primary"
+                dark
+                flat
               >
-                <v-icon left>mdi-login</v-icon>
-                Login
-              </v-btn>
-            </v-card-actions>
-<!--            <v-container fluid>-->
-<!--              <v-divider/>-->
-<!--              <v-row>-->
+                <v-toolbar-title>
+                  Login
+                </v-toolbar-title>
+                <v-spacer/>
+                <v-btn icon :to="'/'">
+                  <v-icon>
+                    mdi-home
+                  </v-icon>
+                </v-btn>
+              </v-toolbar>
+              <v-card-text>
+                <v-form
+                  ref="form"
+                  v-model="valid">
+                  <v-text-field
+                    label="Email"
+                    v-model="email"
+                    :rules="emailRules"
+                    prepend-icon="mdi-email"
+                    type="text"
+                    required
+                  />
 
-<!--                <v-col-->
-<!--                  cols="12"-->
-<!--                  sm="12"-->
-<!--                  class="py-2"-->
-<!--                  align="center"-->
-<!--                >-->
+                  <v-text-field
+                    v-model="password"
+                    :rules="passwordRules"
+                    label="Password"
+                    prepend-icon="mdi-lock"
+                    type="password"
+                    required
+                  />
+                  <div class="text-right">
+                    <nuxt-link :to="'/restore/'" class="font-weight-bold">Forgot password?</nuxt-link>
+                  </div>
+                </v-form>
+              </v-card-text>
+              <v-card-actions class="mx-4">
+                <v-btn :to="'/reg/'" color="primary" class="mb-5">
+                  <v-icon left>mdi-account-plus</v-icon>
+                  Create account
+                </v-btn>
+                <v-spacer/>
+                <v-btn
+                  :disabled="!valid"
+                  class="mb-5"
+                  :loading="onAction"
+                  @click="submit"
+                  color="success"
+                >
+                  <v-icon left>mdi-login</v-icon>
+                  Login
+                </v-btn>
+              </v-card-actions>
+              <!--            <v-container fluid>-->
+              <!--              <v-divider/>-->
+              <!--              <v-row>-->
 
-<!--                  <p>Social login</p>-->
+              <!--                <v-col-->
+              <!--                  cols="12"-->
+              <!--                  sm="12"-->
+              <!--                  class="py-2"-->
+              <!--                  align="center"-->
+              <!--                >-->
 
-<!--                  <v-btn-toggle color="primary">-->
-<!--                    <v-btn>-->
-<!--                      <v-icon>mdi-vk</v-icon>-->
-<!--                    </v-btn>-->
+              <!--                  <p>Social login</p>-->
 
-<!--                    <v-btn>-->
-<!--                      <v-icon>mdi-facebook</v-icon>-->
-<!--                    </v-btn>-->
-<!--                  </v-btn-toggle>-->
-<!--                </v-col>-->
-<!--              </v-row>-->
-<!--            </v-container>-->
-          </v-card>
-        </v-col>
-      </v-row>
+              <!--                  <v-btn-toggle color="primary">-->
+              <!--                    <v-btn>-->
+              <!--                      <v-icon>mdi-vk</v-icon>-->
+              <!--                    </v-btn>-->
+
+              <!--                    <v-btn>-->
+              <!--                      <v-icon>mdi-facebook</v-icon>-->
+              <!--                    </v-btn>-->
+              <!--                  </v-btn-toggle>-->
+              <!--                </v-col>-->
+              <!--              </v-row>-->
+              <!--            </v-container>-->
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-container>
   </v-app>
 </template>
@@ -153,7 +155,7 @@
           store.commit('status/cleanAlert');
 
           const params = new URLSearchParams();
-          params.append('email', this.email);
+          params.append('email', this.email.toLowerCase());
           params.append('password', this.password);
 
           this.$axios.setHeader('Authorization', null);
@@ -175,8 +177,10 @@
                 type: 'success'
               });
               setTimeout(() => router.push('/'), 500)
+            })
+            .finally(() => {
+              setTimeout(() => this.$store.commit('status/cleanAlert'), 2000)
             });
-
           store.commit('status/onProcess', false)
         }
       },

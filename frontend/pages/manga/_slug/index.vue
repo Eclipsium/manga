@@ -313,7 +313,20 @@
       return {
         title: this.mangaData.english_name,
         meta: [
-          {hid: 'home', name: 'description', content: 'Read and add volumes for ' + this.mangaData.english_name}
+          { name: 'description', hid: 'description',content: 'Read and add volumes for ' + this.mangaData.english_name},
+          // Open Graph
+          { name: 'og:title', content: this.mangaData.english_name },
+          { name: 'og:description', content: 'Read and add volumes for ' + this.mangaData.english_name },
+          { name: 'og:type', content: 'website' },
+          { name: 'og:url', content: 'http://manga-exchange.ru' + this.$route.fullPath },
+          { name: 'og:image', content: this.mangaData.poster },
+          // Twitter Card
+          { name: 'twitter:card', content: 'summary' },
+          { name: 'twitter:site', content: 'http://manga-exchange.ru' + this.$route.fullPath },
+          { name: 'twitter:title', content: this.mangaData.english_name },
+          { name: 'twitter:description', content: 'Read and add volumes for ' + this.mangaData.english_name },
+          { name: 'twitter:image', content: this.mangaData.poster },
+          { name: 'twitter:image:alt', content: this.mangaData.english_name }
         ]
       }
     },
@@ -369,9 +382,9 @@
         if (this.isHorizontal) {
           switch (this.$vuetify.breakpoint.name) {
             case 'xs':
-              return '270px';
+              return '250px';
             case 'sm':
-              return '320px';
+              return '300px';
             case 'md':
               return '500px';
             case 'lg':

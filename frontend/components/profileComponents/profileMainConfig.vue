@@ -162,7 +162,7 @@
           this.$store.commit('status/setAlert', {
             'message' :e.response.data.nickname[0],
             'type': 'error',
-          })
+          });
           this.nickNameForChange = this.nickname
         }
         this.changeNickName = false;

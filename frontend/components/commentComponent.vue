@@ -1,13 +1,14 @@
 <template>
-  <div>
-    <v-row>
+  <v-container>
+    <v-row justify="center">
       <v-col
         cols="12"
-        md="12"
+        lg="6"
+        md="8"
+        sm="12"
         v-if="mangaComments.count"
       >
         <v-card
-          width="700"
           v-for="item in reversedComments.slice((page-1)*10, page*10)"
           :key="item.id"
         >
@@ -40,58 +41,68 @@
         </v-card>
       </v-col>
       <v-col cols="12"
-             md="12"
+             lg="6"
+             md="8"
+             sm="12"
              v-if="!mangaComments.count"
       >
-        <v-card flat min-width="700">
+        <v-card flat>
           <v-card-title>
             Comments not found. Be first!
           </v-card-title>
         </v-card>
       </v-col>
     </v-row>
-    <div class="text-center">
-      <v-pagination
-        v-if="mangaComments.count"
-        v-model="page"
-        :length="Math.ceil(this.mangaComments.count / 10)"
-      ></v-pagination>
-    </div>
-    <v-container  v-if="$store.state.user.isAuth">
-      <v-form
-        v-model="isValid"
-        ref="form"
-        lazy-validation
+    <v-row justify="center">
+      <v-col
+        cols="12"
+        lg="6"
+        md="8"
+        sm="12"
       >
-        <v-textarea
-          outlined
-          label="Leave a comment"
-          class="mt-3"
-          v-model="commentText"
-          :rules="commentRules"
-        >
-        </v-textarea>
-      </v-form>
 
-      <div class="text-center">
-        <v-btn color="success" @click="submitComment" :disabled="!isValid || loading">
-          <v-icon left>
-            mdi-comment
-          </v-icon>
-          submit
-        </v-btn>
-      </div>
-    </v-container>
-    <v-container v-if="!$store.state.user.isAuth">
-      <v-subheader>For leave comment you need login
-        <v-spacer></v-spacer>
-        <v-btn :to="'/login/'" color="success">
-        login
-      </v-btn>
-      </v-subheader>
-    </v-container>
+        <div class="text-center">
+          <v-pagination
+            v-if="mangaComments.count"
+            v-model="page"
+            :length="Math.ceil(this.mangaComments.count / 10)"
+          ></v-pagination>
+        </div>
+        <v-container v-if="$store.state.user.isAuth">
+          <v-form
+            v-model="isValid"
+            ref="form"
+            lazy-validation
+          >
+            <v-textarea
+              outlined
+              label="Leave a comment"
+              class="mt-3"
+              v-model="commentText"
+              :rules="commentRules"
+            >
+            </v-textarea>
+          </v-form>
 
-  </div>
+          <div class="text-center">
+            <v-btn color="success" @click="submitComment" :disabled="!isValid || loading">
+              <v-icon left>
+                mdi-comment
+              </v-icon>
+              submit
+            </v-btn>
+          </div>
+        </v-container>
+        <v-container v-if="!$store.state.user.isAuth">
+          <v-subheader>For leave comment you need
+            <v-btn :to="'/login/'" small color="success" class="ml-2">
+              login
+            </v-btn>
+          </v-subheader>
+        </v-container>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

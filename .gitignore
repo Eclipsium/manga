@@ -208,6 +208,5 @@ media/archive/
 media/manga/
 media/posters/
 media/temp/
-templates/
 media/cache/
 manga/dev.py

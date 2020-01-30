@@ -56,8 +56,22 @@
       return {
         title: 'Catalog',
         meta: [
-          {hid: 'home', name: 'description', content: 'Search and filter manga'}
+          { name: 'description', hid: 'description', content: 'Search and filter manga' },
+          // Open Graph
+          { name: 'og:title', content: 'Manga catalog' },
+          { name: 'og:description', content: 'Search and filter manga' },
+          { name: 'og:type', content: 'website' },
+          { name: 'og:url', content: 'http://manga-exchange.ru' + this.$route.fullPath },
+          { name: 'og:image', content: 'https://nuxtjs.org/meta_640.png' },
+          // Twitter Card
+          { name: 'twitter:card', content: 'summary' },
+          { name: 'twitter:site', content: 'http://manga-exchange.ru' + this.$route.fullPath },
+          { name: 'twitter:title', content: 'Manga catalog' },
+          { name: 'twitter:description', content: 'Search and filter manga' },
+          { name: 'twitter:image', content: 'https://nuxtjs.org/meta_640.png' },
+          { name: 'twitter:image:alt', content: 'NuxtJS Logo' }
         ]
+
       }
     },
     components: {

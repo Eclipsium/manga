@@ -25,6 +25,6 @@ urlpatterns = [
     url(r'^api/v1/auth/', include('djoser.urls.authtoken')),
     path('api/v1/', include('apps.urls')),
 ]
-
+#
 # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,10 +1,16 @@
 import colors from 'vuetify/es5/util/colors'
 
+const axios = require('axios');
+
+const axiosConfUrl = 'http://localhost:8000';
+// const axiosConfUrl = 'http://manga-exchange.ru';
+
+
 export default {
   mode: 'universal',
   server: {
-    // host: 'localhost',
-    host: '92.63.105.56',
+    host: 'localhost',
+    // host: '92.63.105.56',
     port: 3000,
   },
   /*
@@ -37,22 +43,58 @@ export default {
   */
   buildModules: [
     '@nuxtjs/vuetify',
+    ['@nuxtjs/google-analytics', {
+      id: 'UA-157374239-1'
+    }]
   ],
   /*
   ** Nuxt.js modules
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    ['@nuxtjs/axios', { host: '92.63.105.56', port: 80}],
-    // ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
+    // ['@nuxtjs/axios', { host: '92.63.105.56', port: 80}],
+    ['@nuxtjs/axios', {host: 'localhost', port: 8000}],
     ['nuxt-vuex-localstorage', {
       localStorage: ['user'],  //  If not entered, “localStorage” is the default value
     }],
+    ['@nuxtjs/robots', { /* module options */}],
+    '@nuxtjs/sitemap',
   ],
-  /*
-  ** Axios module configuration
-  ** See https://axios.nuxtjs.org/options
-  */
+  // Sitemap config
+  sitemap: [
+    {
+      path: '/sitemapindex.xml',
+      hostname: 'http://manga-exchange.ru',
+      gzip: true,
+      exclude: [
+        '/admin/**'
+      ],
+      sitemaps: [
+        {
+          path: '/sitemap-default.xml',
+        },
+        {
+          path: '/sitemap-manga.xml',
+          routes: async () => {
+            const {data} = await axios.get(axiosConfUrl + '/api/v1/manga/');
+            return data.results.map(manga => `/manga/${manga.slug}/`)
+          },
+          exclude: [
+            '/**'
+          ],
+        },
+      ],
+    }
+  ],
+  //Robots config
+  robots: [
+    {
+      UserAgent: '*',
+      Sitemap: 'http://manga-exchange.ru/sitemapindex.xml',
+      CrawlDelay: 2000,
+      Disallow: () => '/admin' // accepts function
+    }
+  ],
 
   /*
   ** vuetify module configuration

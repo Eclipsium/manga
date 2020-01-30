@@ -1,9 +1,9 @@
 <template>
   <v-app>
-      <v-container
-        class="fill-height"
-        fluid
-      >
+    <v-container
+      class="fill-height"
+    >
+      <v-container>
         <v-snackbar
           v-if="isAlert"
           v-model="snackbar"
@@ -97,10 +97,10 @@
                   </v-checkbox>
                 </v-form>
               </v-card-text>
-              <v-card-actions class="mx-4 ">
+              <v-card-actions class="mx-4">
                 <v-btn :to="'/login/'" color="primary" class="mb-4">
                   <v-icon left>mdi-login</v-icon>
-                  Have account?
+                  Login
                 </v-btn>
                 <v-spacer/>
                 <v-btn
@@ -118,6 +118,7 @@
           </v-col>
         </v-row>
       </v-container>
+    </v-container>
   </v-app>
 </template>
 
@@ -211,7 +212,7 @@
     props: {
       source: String
     },
-    mounted(){
+    mounted() {
       this.$store.commit('status/clearAlert')
     }
   }
