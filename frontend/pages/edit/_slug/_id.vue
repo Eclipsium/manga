@@ -142,8 +142,8 @@
       }
     },
     methods: {
-      deleteImage(item) {
-        this.$axios.$delete('http://localhost:8000/api/v1/images/' + item.id + '/')
+      async deleteImage(item) {
+        await this.$axios.$delete('/api/v1/images/' + item.id + '/')
           .then(() => {
             this.images.results = this.images.results.filter(function (obj) {
               return obj.id !== item.id;

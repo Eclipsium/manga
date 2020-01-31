@@ -165,7 +165,7 @@
       async submit() {
         if (this.$refs.form.validate()) {
           let payload = {
-            "email": this.email,
+            "email": this.email.toLowerCase(),
             "nickname": this.nickname,
             "password": this.password
           };

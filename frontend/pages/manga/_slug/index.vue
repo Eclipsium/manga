@@ -180,7 +180,7 @@
         <comment-component :mangaData="mangaData" :mangaComments="mangaComments"></comment-component>
       </v-row>
     </client-only>
-    <v-dialog v-model="readMangaDialog" fullscreen hide-overlay dark transition="slide-x-reverse-transition">
+    <v-dialog v-model="readMangaDialog" scrollable fullscreen hide-overlay dark transition="slide-x-reverse-transition">
       <v-card :max-width="$vuetify.breakpoint.width" :max-height="$vuetify.breakpoint.height">
         <v-toolbar dark dense flat>
           <v-toolbar-title>{{mangaData.english_name}}</v-toolbar-title>
