@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 const axios = require('axios');
 
 // const axiosConfUrl = 'http://localhost:8000';
-const axiosConfUrl = 'http://manga-exchange.ru';
+const axiosConfUrl = 'http://manga-exchange.ru:8000';
 
 
 export default {
