@@ -35,7 +35,7 @@ urlpatterns = [
 
     url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-    path('manga/<slug:slug>/volumes/', MangaMainPageView.as_view()),
+    path('manga/<slug:slug>/volumes/', MangaVolumeView.as_view()),
     path('manga/<slug:slug>/<int:pk>/create/', MangaVolumeCreateView.as_view()),
     path('manga/last/', MangaLastAddView.as_view()),
     path('manga/list/', MangaListView.as_view()),

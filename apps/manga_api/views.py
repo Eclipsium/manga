@@ -113,7 +113,7 @@ class MangaSearchArtistView(generics.ListAPIView):
         return Manga.objects.filter(artists=slug)
 
 
-class MangaMainPageView(APIView):
+class MangaVolumeView(APIView):
     """
     GET - Отдает информацию о манге и ее части
     """
@@ -123,15 +123,26 @@ class MangaMainPageView(APIView):
         manga = Manga.objects.get(slug=kwargs['slug'])
         volumes = manga.mangavolume_set.all()
         manga_set = []
-        for volume in volumes:
-            response = {
-                'id': volume.pk,
-                'date': volume.create_time.strftime("%d-%m-%Y"),
-                'volume': volume.volume,
-                'created_by': volume.created_by.nickname,
-                'image_count': volume.mangaimage_set.count()
-            }
-            manga_set.append(response)
+        if request.user.is_staff:
+            for volume in volumes:
+                response = {
+                    'id': volume.pk,
+                    'date': volume.create_time.strftime("%d-%m-%Y"),
+                    'volume': volume.volume,
+                    'created_by': volume.created_by.nickname,
+                    'image_count': volume.mangaimage_set.count()
+                }
+                manga_set.append(response)
+
+        else:
+            for volume in volumes:
+                response = {
+                    'id': volume.pk,
+                    'date': volume.create_time.strftime("%d-%m-%Y"),
+                    'volume': volume.volume,
+                    'image_count': volume.mangaimage_set.count()
+                }
+                manga_set.append(response)
         return Response(manga_set)
 
 

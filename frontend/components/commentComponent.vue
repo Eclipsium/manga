@@ -46,11 +46,9 @@
              sm="12"
              v-if="!mangaComments.count"
       >
-        <v-card flat>
-          <v-card-title>
+          <p class="text-center title">
             Comments not found. Be first!
-          </v-card-title>
-        </v-card>
+          </p>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -94,7 +92,7 @@
           </div>
         </v-container>
         <v-container v-if="!$store.state.user.isAuth">
-          <v-subheader>For leave comment you need
+          <v-subheader class="justify-center text-center">For leave comment you need
             <v-btn :to="'/login/'" small color="success" class="ml-2">
               login
             </v-btn>

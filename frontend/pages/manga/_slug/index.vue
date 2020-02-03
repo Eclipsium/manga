@@ -74,7 +74,7 @@
             <p class="title">List of parts:</p>
           </v-row>
           <v-data-table
-            :headers="headers"
+            :headers="$store.state.user.isAdmin ? admin_headers : user_headers"
             :items="mangaVolumes"
             max-height="350px"
             item-key="name"
@@ -168,7 +168,10 @@
                 color="primary"
                 :to="'upload/'"
               >
-                Add manga volume
+                <v-icon left>
+                  mdi-message-plus
+                </v-icon>
+                upload next volume
               </v-btn>
             </client-only>
           </div>
@@ -519,9 +522,15 @@
         v => !!v || 'Is required',
         v => /^\d+$/.test(v) || 'Input digit!'
       ],
-      headers: [
+      admin_headers: [
         {text: 'Manga volume', value: 'volume', align: 'center',},
         {text: 'Uploaded by', value: 'user'},
+        {text: 'Upload date', value: 'date'},
+        {text: 'Image count', value: 'image_count'},
+        {text: 'Actions', value: 'action', sortable: false},
+      ],
+      user_headers: [
+        {text: 'Manga volume', value: 'volume', align: 'center',},
         {text: 'Upload date', value: 'date'},
         {text: 'Image count', value: 'image_count'},
         {text: 'Actions', value: 'action', sortable: false},
