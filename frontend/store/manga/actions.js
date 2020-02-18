@@ -3,7 +3,6 @@ export default {
 
     const formData = new FormData();
     formData.append('english_name', payload.english_name);
-    formData.append('japan_name', payload.japan_name);
     formData.append('descriptions', payload.descriptions);
     formData.append('poster', payload.poster);
     formData.append('artists', payload.artists);

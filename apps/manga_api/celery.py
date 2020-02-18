@@ -8,7 +8,7 @@ os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
 # app = Celery('manga_api',
 #              broker='amqp://manga:mangapassword@localhost:5672/mangahost',
 #              )
-
+#
 app = Celery('manga_api',
              broker='redis://localhost:6379/0',
              )

@@ -88,7 +88,6 @@
 
   export default {
     name: "addMangaVolume",
-    middleware: 'notAuth',
     head() {
       return {
         title: 'Add volume for ' + this.mangaData.english_name,
@@ -130,16 +129,19 @@
         this.valid = false;
         let router = this.$router;
 
-        this.$axios.setToken('Token ' + this.token);
-
+        if (this.token)
+        {
+          this.$axios.setToken('Token ' + this.token);
+        }
         const formData = new FormData();
         formData.append('volume', this.volume);
         formData.append('archive', this.archive);
         formData.append('manga', this.mangaData.id);
 
         let store = this.$store;
+        let slug = this.mangaData.slug
 
-        await this.$axios.$post('/api/v1/manga/add/', formData,
+        await this.$axios.$post('/api/v1/manga/upload/', formData,
           {
             onUploadProgress: function (progressEvent) {
               this.uploadPercentage = parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100));
@@ -152,7 +154,7 @@
           };
           store.commit('status/setAlert', payload);
           setTimeout(function () {
-            router.go(-1)
+            router.push('/manga/' + slug + '/')
           }, 1000)
         }).catch((res) => {
           let payload = {

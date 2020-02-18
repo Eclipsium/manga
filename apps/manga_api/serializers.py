@@ -18,6 +18,17 @@ class MangaSerializer(serializers.ModelSerializer):
         ]
 
 
+class MangaAnonSerializer(serializers.ModelSerializer):
+    create_by_user = serializers.HiddenField(default=None)
+
+    class Meta:
+        model = Manga
+        fields = [
+            'id', 'english_name', 'descriptions', 'slug', 'poster', 'rating',
+            'is_promoted', 'artists', 'create_by_user'
+        ]
+
+
 class MangaHomePageSerializer(serializers.ModelSerializer):
     """
     Сериализатор для главной страницы

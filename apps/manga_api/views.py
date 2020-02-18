@@ -12,7 +12,7 @@ from apps.manga_api.models import Manga, MangaVolume, MangaArchive, MangaImage
 from apps.manga_api.permissions import IsAdminUserOrReadOnly, IsOwnerOrAdminOrReadOnly
 from apps.manga_api.serializers import MangaSerializer, MangaHomePageSerializer, MangaListSerializer, \
     MangaArchiveSerializer, MangaImageViewSerializer, MangaVolumeSerializer, ImageGetViewSerializer, \
-    ImagePostViewSerializer
+    ImagePostViewSerializer, MangaAnonSerializer
 from .filters import PromoteAndArtistsFilter
 from .paginations import StandardResultsSetPagination
 from .tasks import parse_task_data
@@ -20,14 +20,18 @@ from .tasks import parse_task_data
 
 class MangaViewSet(viewsets.ModelViewSet):
     queryset = Manga.objects.filter()
-    serializer_class = MangaSerializer
     search_fields = ['english_name', 'artists']
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    permission_classes = [AllowAny, ]
     lookup_field = 'slug'
     ordering_fields = ['rating', 'is_promoted']
     filterset_class = PromoteAndArtistsFilter
-    # filterset_fields = ('is_promoted',)
+
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            return MangaSerializer
+        else:
+            return MangaAnonSerializer
 
 
 class MangaListView(generics.ListAPIView):
@@ -84,7 +88,7 @@ class MangaVolumeCreateView(APIView):
     """
     GET - Create new volume for manga
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         manga_slug = kwargs['slug']
@@ -97,7 +101,7 @@ class MangaVolumeCreateView(APIView):
 
         if manga:
             try:
-                MangaVolume.objects.create(manga=manga, volume=volume_pk, created_by=request.user)
+                MangaVolume.objects.create(manga=manga, volume=volume_pk)
                 return Response('created', status=status.HTTP_201_CREATED)
             except IntegrityError:
                 return Response('message: Manga volume already created!', status=status.HTTP_400_BAD_REQUEST)
@@ -125,11 +129,15 @@ class MangaVolumeView(APIView):
         manga_set = []
         if request.user.is_staff:
             for volume in volumes:
+                if volume.created_by:
+                    created_by = volume.created_by.nickname
+                else:
+                    created_by = None
                 response = {
                     'id': volume.pk,
                     'date': volume.create_time.strftime("%d-%m-%Y"),
                     'volume': volume.volume,
-                    'created_by': volume.created_by.nickname,
+                    'created_by': created_by,
                     'image_count': volume.mangaimage_set.count()
                 }
                 manga_set.append(response)
@@ -154,7 +162,7 @@ class MangaPromotedView(generics.ListAPIView):
 
 class MangaArchiveCreateView(generics.CreateAPIView):
     queryset = MangaArchive.objects.all()
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [AllowAny, ]
     serializer_class = MangaArchiveSerializer
 
     def perform_create(self, serializer):
@@ -164,7 +172,6 @@ class MangaArchiveCreateView(generics.CreateAPIView):
         except ObjectDoesNotExist:
             instance = serializer.save()
             manga_volume = MangaVolume.objects.create(
-                created_by=self.request.user,
                 volume=instance.volume,
                 manga=instance.manga
             ).pk

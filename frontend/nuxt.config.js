@@ -9,8 +9,8 @@ const axiosConfUrl = 'http://92.63.105.56';
 export default {
   mode: 'universal',
   server: {
-    // host: 'localhost',
-    host: '92.63.105.56',
+    host: 'localhost',
+    // host: '92.63.105.56',
     port: 3000,
   },
   /*
@@ -59,6 +59,9 @@ export default {
     }],
     ['@nuxtjs/robots', { /* module options */}],
     '@nuxtjs/sitemap',
+    ['@nuxtjs/google-adsense', {
+      id: 'ca-pub-3545937564525761'
+    }]
   ],
   // Sitemap config
   sitemap: [

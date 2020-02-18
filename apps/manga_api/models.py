@@ -63,7 +63,8 @@ def get_sentinel_user():
 
 
 class Manga(models.Model):
-    create_by_user = models.ForeignKey(User, verbose_name='Create by user', on_delete=models.SET(get_sentinel_user))
+    create_by_user = models.ForeignKey(User, verbose_name='Create by user', on_delete=models.SET(get_sentinel_user),
+                                       null=True, blank=True)
     english_name = models.CharField('English title', max_length=100, unique=True)
     descriptions = models.TextField('Description', max_length=500, blank=True, null=True)
     slug = models.SlugField('url', unique=True, blank=True, null=True)

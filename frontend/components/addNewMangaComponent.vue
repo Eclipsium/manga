@@ -138,7 +138,7 @@
           <v-icon left>
             mdi-book-plus
           </v-icon>
-          Add
+          Add new manga series
         </v-btn>
         <v-snackbar
           v-model="isComplete"
@@ -215,12 +215,13 @@
         }
         let payload = {
           'english_name': this.engName,
-          'japan_name': this.jpnName,
           'descriptions': this.descriptions,
           'poster': this.file,
           'artists': artists,
         };
-        this.$axios.setToken('Token ' + this.token);
+        if (this.token) {
+          this.$axios.setToken('Token ' + this.token);
+        }
         this.$store.dispatch('manga/SUBMIT_MANGA_ADD_FORM', payload);
         this.isComplete = true;
         this.isLoading = false;

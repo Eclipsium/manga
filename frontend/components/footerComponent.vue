@@ -7,18 +7,6 @@
       no-gutters
     >
       <v-btn
-       :to="'/copyright/'"
-        color="primary"
-        text
-        class="mt-2"
-      >
-        <v-icon left>
-          mdi-copyright
-        </v-icon>
-        Copyright holders
-      </v-btn>
-
-      <v-btn
         href="mailto:abiogenesis70ru@gmail.com"
         color="primary"
         text
@@ -31,7 +19,7 @@
       </v-btn>
 
       <v-btn
-       :to="'/license/'"
+       :to="'/purpose/'"
         color="primary"
         text
         class="mt-2"
@@ -39,7 +27,7 @@
         <v-icon left>
           mdi-license
         </v-icon>
-        License Agreement
+        The purpose of this site
       </v-btn>
 
 

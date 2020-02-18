@@ -7,8 +7,6 @@
       app
     >
       <v-container>
-
-
       <v-list dense class="pt-0">
         <client-only>
           <v-list-item
@@ -90,7 +88,6 @@
       </v-list>
       </v-container>
     </v-navigation-drawer>
-    <client-only>
       <v-app-bar
         app
         hide-on-scroll
@@ -99,8 +96,7 @@
         <v-toolbar-title v-text="title"/>
         <v-spacer/>
         <v-toolbar-items class="hidden-md-and-down">
-          <client-only>
-            <v-btn v-for="(item, i) in $store.state.user.isAuth ? loginItems: logoutItems"
+            <v-btn v-for="(item, i) in loginItems"
                    :key="i"
                    :to="item.to"
                    :color="item.color ? item.color : ''"
@@ -112,7 +108,6 @@
               <v-icon left>{{item.icon}}</v-icon>
               {{item.title}}
             </v-btn>
-          </client-only>
         </v-toolbar-items>
         <v-toolbar-items class="hidden-md-and-down align-end mx-1 mt-7">
           <v-autocomplete
@@ -187,7 +182,6 @@
           </v-toolbar-items>
         </client-only>
       </v-app-bar>
-    </client-only>
     <v-content>
       <v-container fluid>
         <nuxt/>
@@ -228,21 +222,9 @@
           {
             icon: 'mdi-book-plus',
             title: 'Upload comic',
-            to: '/add/',
+            to: '/upload/',
             color: 'success'
           }
-        ],
-        logoutItems: [
-          {
-            icon: 'mdi-home',
-            title: 'Home',
-            to: '/',
-          },
-          {
-            icon: 'mdi-chart-bubble',
-            title: 'Search comic',
-            to: '/manga/'
-          },
         ],
         profileItems: [
           {title: 'My profile', to: '/profile/', icon: 'mdi-account'},

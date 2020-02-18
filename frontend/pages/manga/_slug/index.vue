@@ -54,70 +54,70 @@
         cols="12"
         md="6">
         <v-container>
-          <v-row v-if="mangaData.descriptions">
-            <p class="title">Description:</p>
-            <p>{{mangaData.descriptions}}</p>
-          </v-row>
-          <v-row v-if="mangaData.artists[0]">
-            <p class="title mr-4 align-center">Artists: </p>
-            <v-chip
-              color="primary"
-              class="ma-2 align-center"
-              v-for="artist in this.mangaData.artists[0].split(',')" :key="artist"
-              @click=toArtistPage(artist)
-              label
-            >
-              {{artist}}
-            </v-chip>
-          </v-row>
-          <v-row>
-            <p class="title">List of parts:</p>
-          </v-row>
-          <v-data-table
-            :headers="$store.state.user.isAdmin ? admin_headers : user_headers"
-            :items="mangaVolumes"
-            max-height="350px"
-            item-key="name"
-            class="elevation-1"
-            :sort-by="['volume']"
-            :sort-desc="[false]"
-          >
-            <template v-slot:item.user="{ item }">
-              <nuxt-link
-                :to="'/profile/'+ item.created_by + '/'"
-                :event="isDeleted(item) ? '' : 'click'"
-                :class="isDeleted(item) ? 'disabled': ''"
+          <client-only>
+            <v-row v-if="mangaData.descriptions">
+              <p class="title">Description:</p>
+              <p>{{mangaData.descriptions}}</p>
+            </v-row>
+            <v-row v-if="mangaData.artists[0]">
+              <p class="title mr-4 align-center">Artists: </p>
+              <v-chip
+                color="primary"
+                class="ma-2 align-center"
+                v-for="artist in this.mangaData.artists[0].split(',')" :key="artist"
+                @click=toArtistPage(artist)
+                label
               >
-                {{item.created_by}}
-              </nuxt-link>
-            </template>
-            <template
-              v-slot:item.image_count="{item}"
+                {{artist}}
+              </v-chip>
+            </v-row>
+            <v-row>
+              <p class="title">List of parts:</p>
+            </v-row>
+            <v-data-table
+              :headers="$store.state.user.isAdmin ? admin_headers : user_headers"
+              :items="mangaVolumes"
+              max-height="350px"
+              item-key="name"
+              class="elevation-1"
+              :sort-by="['volume']"
+              :sort-desc="[false]"
             >
-              <v-tooltip bottom v-if="item.image_count % 2 === 1">
-                <template v-slot:activator="{ on }">
-                  <div
-                    class="orange--text font-weight-bold"
-                    v-on="on"
-                  >
-                    {{item.image_count}}
-                  </div>
-                </template>
-                <span>
+              <template v-slot:item.user="{ item }">
+                <nuxt-link
+                  :to="'/profile/' + item.created_by + '/'"
+                  :event="isDeleted(item) ? '' : 'click'"
+                  :class="isDeleted(item) ? 'disabled': ''"
+                >
+                  {{item.created_by ? item.created_by : 'Anonymous' }}
+                </nuxt-link>
+              </template>
+              <template
+                v-slot:item.image_count="{item}"
+              >
+                <v-tooltip bottom v-if="item.image_count % 2 === 1">
+                  <template v-slot:activator="{ on }">
+                    <div
+                      class="orange--text font-weight-bold"
+                      v-on="on"
+                    >
+                      {{item.image_count}}
+                    </div>
+                  </template>
+                  <span>
                   Odd number of pages. You may need to edit
                 </span>
-              </v-tooltip>
-              <div class="green--text font-weight-bold"
-                   v-if="item.image_count % 2 === 0 && item.image_count">
-                {{item.image_count}}
-              </div>
-              <div
-                v-if="!item.image_count">
-                loading...
-              </div>
-            </template>
-            <template v-slot:item.action="{ item }">
-              <client-only>
+                </v-tooltip>
+                <div class="green--text font-weight-bold"
+                     v-if="item.image_count % 2 === 0 && item.image_count">
+                  {{item.image_count}}
+                </div>
+                <div
+                  v-if="!item.image_count">
+                  loading...
+                </div>
+              </template>
+              <template v-slot:item.action="{ item }">
                 <v-btn
                   icon
                   v-if="item.image_count"
@@ -158,13 +158,12 @@
                     mdi-delete
                   </v-icon>
                 </v-btn>
-              </client-only>
-            </template>
-          </v-data-table>
-          <div class='text-center mt-4'>
-            <client-only>
+              </template>
+
+            </v-data-table>
+
+            <div class='text-center mt-4'>
               <v-btn
-                v-if="$store.state.user.isAuth"
                 color="primary"
                 :to="'upload/'"
               >
@@ -173,8 +172,8 @@
                 </v-icon>
                 upload next volume
               </v-btn>
-            </client-only>
-          </div>
+            </div>
+          </client-only>
         </v-container>
       </v-col>
     </v-row>
@@ -316,20 +315,20 @@
       return {
         title: this.mangaData.english_name,
         meta: [
-          { name: 'description', hid: 'description',content: 'Read and add volumes for ' + this.mangaData.english_name},
+          {name: 'description', hid: 'description', content: 'Read and upload volumes for ' + this.mangaData.english_name},
           // Open Graph
-          { name: 'og:title', content: this.mangaData.english_name },
-          { name: 'og:description', content: 'Read and add volumes for ' + this.mangaData.english_name },
-          { name: 'og:type', content: 'website' },
-          { name: 'og:url', content: 'http://manga-exchange.ru' + this.$route.fullPath },
-          { name: 'og:image', content: this.mangaData.poster },
+          {name: 'og:title', content: this.mangaData.english_name},
+          {name: 'og:description', content: 'Read and upload volumes for ' + this.mangaData.english_name},
+          {name: 'og:type', content: 'website'},
+          {name: 'og:url', content: 'http://manga-exchange.ru' + this.$route.fullPath},
+          {name: 'og:image', content: this.mangaData.poster},
           // Twitter Card
-          { name: 'twitter:card', content: 'summary' },
-          { name: 'twitter:site', content: 'http://manga-exchange.ru' + this.$route.fullPath },
-          { name: 'twitter:title', content: this.mangaData.english_name },
-          { name: 'twitter:description', content: 'Read and add volumes for ' + this.mangaData.english_name },
-          { name: 'twitter:image', content: this.mangaData.poster },
-          { name: 'twitter:image:alt', content: this.mangaData.english_name }
+          {name: 'twitter:card', content: 'summary'},
+          {name: 'twitter:site', content: 'http://manga-exchange.ru' + this.$route.fullPath},
+          {name: 'twitter:title', content: this.mangaData.english_name},
+          {name: 'twitter:description', content: 'Read and upload volumes for ' + this.mangaData.english_name},
+          {name: 'twitter:image', content: this.mangaData.poster},
+          {name: 'twitter:image:alt', content: this.mangaData.english_name}
         ]
       }
     },
@@ -362,8 +361,8 @@
           this.lastImageIndex = this.currentImageIndex
         }
       },
-      readMangaDialog(){
-        if(this.readMangaDialog === false){
+      readMangaDialog() {
+        if (this.readMangaDialog === false) {
           this.lastImageIndex = 0;
           this.currentImageIndex = 0;
         }
@@ -453,7 +452,7 @@
         }
       },
       isDeleted(item) {
-        return item.created_by === 'deleted'
+        return item.created_by === 'deleted' || item.created_by === null
       },
       submitRecommend() {
         this.recommend = !this.recommend;
