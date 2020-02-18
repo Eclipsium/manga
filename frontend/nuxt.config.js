@@ -9,8 +9,8 @@ const axiosConfUrl = 'http://92.63.105.56';
 export default {
   mode: 'universal',
   server: {
-    host: 'localhost',
-    // host: '92.63.105.56',
+    // host: 'localhost',
+    host: '92.63.105.56',
     port: 3000,
   },
   /*
