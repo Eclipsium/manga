@@ -12,16 +12,16 @@ developer - abiogenesis70ru@gmail.com
 
 ##### Nginx, Node.js, Gunicorn, celery, redis
 
-##API endpoints
+## API endpoints
 http://manga-exchange.ru/api/v1/ - REST Swagger
 
-##Admin panel
+## Admin panel
 http://manga-exchange.ru/admin/
 
-###Commands
+### Commands
 
-####Clear cache - `python manage.py thumbnail cleanup`
-####Apply changes for frontend - `npm run build && pm2 restart`
-####Restart gunicorn - `sudo systemctl restart manga.service`
+#### Clear cache - `python manage.py thumbnail cleanup`
+#### Apply changes for frontend - `npm run build && pm2 restart`
+#### Restart gunicorn - `sudo systemctl restart manga.service`
 
 
