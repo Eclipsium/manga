@@ -2,15 +2,15 @@
 
 developer - abiogenesis70ru@gmail.com
 
-######Stack:
+###### Stack:
 
-#####Backend - Django Rest framework https://www.django-rest-framework.org/
+##### Backend - Django Rest framework https://www.django-rest-framework.org/
 
-#####Frontend - Nuxt.js & vuetify.js https://nuxtjs.org https://vuetifyjs.com
+##### Frontend - Nuxt.js & vuetify.js https://nuxtjs.org https://vuetifyjs.com
 
-##Server config
+## Server config
 
-#####Nginx, Node.js, Gunicorn, celery, redis
+##### Nginx, Node.js, Gunicorn, celery, redis
 
 ##API endpoints
 http://manga-exchange.ru/api/v1/ - REST Swagger
